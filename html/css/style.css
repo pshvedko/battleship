@@ -1,0 +1,77 @@
+html {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+body {
+    background: darkgray;
+    align-self: auto;
+    margin: 1em;
+    padding: 1em;
+}
+
+.app {
+    display: flex;
+    width: auto;
+    background: beige;
+    box-shadow: 0 0 96px 0 rgba(0, 0, 0, 0.75);
+    border-radius: 20px;
+    padding: 1em;
+}
+
+
+table {
+    border-spacing: 0;
+    border: cornflowerblue 1px solid;
+    margin: 1em;
+}
+
+td {
+    background-color: beige;
+    border: cornflowerblue 1px solid;
+    width: 32px;
+    height: 32px;
+}
+
+td.void:hover {
+    background-color: lightgray;
+}
+
+.field {
+    margin: 1em;
+}
+
+.void {
+    cursor: pointer;
+}
+
+.free {
+    background-color: lightcyan;
+}
+
+.boom {
+    background-color: firebrick;
+}
+
+.lose {
+    background-color: darksalmon;
+}
+
+.copy {
+    padding: 8px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    margin: 1em auto;
+    text-align: center;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    width: auto;
+    user-select: none;
+}
