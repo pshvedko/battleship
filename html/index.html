@@ -52,21 +52,19 @@
 
     function reply(p) {
         let id = parseInt(p[0])
-        let code = parseInt(p[1])
         if (!handle.has(id))
             return
-        if (Math.floor(code / 100) === 2 && p[2].length > 0) {
-            try {
-                handle.get(id)(JSON.parse(p[2]))
-            } catch (e) {
-            } finally {
-                handle.delete(id)
-            }
+        let code = parseInt(p[1])
+        try {
+            handle.get(id)(code, JSON.parse(p[2]))
+        } catch (e) {
         }
+        if (Math.floor(code / 100) !== 1)
+            handle.delete(id)
     }
 
-    function onBegin(e) {
-        console.log(e)
+    function onBegin(code, e) {
+        console.log(code, e)
     }
 
     socket.onopen = function () {
@@ -77,12 +75,12 @@
         reply(e.data.toString().split(/\r?\n/))
     }
 
-    socket.onclose = function (e) {
-        console.log(e)
+    socket.onclose = function () {
+        handle.clear()
     }
 
-    socket.onerror = function (e) {
-        console.log(e)
+    socket.onerror = function () {
+        handle.clear()
     }
 
     window.onload = function () {

@@ -183,7 +183,7 @@ func (a *Application) UpgradeAndServe(updater websocket.Upgrader, handler http.H
 
 func (a *Application) Begin(w http.ResponseWriter, r *http.Request) {
 
-	w.WriteHeader(http.StatusOK)
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusContinue)
+	w.WriteHeader(http.StatusContinue)
 	w.WriteHeader(http.StatusOK)
 }
