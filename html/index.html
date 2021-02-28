@@ -42,7 +42,7 @@
     }
 
     let seq = 0
-    let socket = new WebSocket(location.origin.replace(/^http/, 'ws') + "/api/v1/websocket")
+    let socket = new WebSocket(location.origin.replace(/^http/, 'ws'))
     let handle = new Map
 
     function query(done, id, method, path, body) {

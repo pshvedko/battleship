@@ -79,8 +79,9 @@ func (a WebSocket) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (a WebSocket) UpgradeMiddleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if strings.EqualFold(r.Header.Get("Connection"), "Upgrade") &&
-			strings.EqualFold(r.Header.Get("Upgrade"), "Websocket") {
+		connection := r.Header.Get("Connection")
+		upgrade := r.Header.Get("Upgrade")
+		if strings.EqualFold(connection, "Upgrade") && strings.EqualFold(upgrade, "Websocket") {
 			a.ServeHTTP(w, r)
 		} else {
 			h.ServeHTTP(w, r)

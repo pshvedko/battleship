@@ -30,9 +30,9 @@ func main() {
 	r := mux.NewRouter()
 	f := http.FileServer(api.Dir("html"))
 	r.PathPrefix("/").Handler(http.StripPrefix("/", f)).Methods(http.MethodGet, http.MethodHead)
-	r.Use(w.UpgradeMiddleware)
-	r.Use(a.SessionMiddleware)
 	r.Use(a.LoggingMiddleware)
+	r.Use(a.SessionMiddleware)
+	r.Use(w.UpgradeMiddleware)
 	err := http.ListenAndServe(":8080", r)
 	if err != nil {
 		log.Fatal(err)

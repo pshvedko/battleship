@@ -38,14 +38,13 @@ func (w *loggingWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 	return h.Hijack()
 }
 
-func (a *Application) LoggingMiddleware(handler http.Handler) http.Handler {
-	if a.Logging == nil {
-		return handler
-	}
+func (a *Application) LoggingMiddleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		l := &loggingWriter{ResponseWriter: w}
 		t := time.Now()
-		handler.ServeHTTP(l, r)
-		a.Logging.Println(r.Method, r.URL, r.Proto, l.Status, l.Length, time.Now().Sub(t))
+		h.ServeHTTP(l, r)
+		if a.Logging != nil {
+			a.Logging.Println(r.Method, r.URL, r.Proto, l.Status, l.Length, time.Now().Sub(t))
+		}
 	})
 }
