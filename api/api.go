@@ -103,6 +103,12 @@ func (w *messageWriter) Flush() {
 	w.Close()
 }
 
+func (w *messageWriter) Status100() {
+	if w.st > 99 && w.st < 200 {
+		w.st += 100
+	}
+}
+
 type upgradeAndServe struct {
 	u websocket.Upgrader
 	h http.Handler
@@ -174,6 +180,7 @@ func NewMessageWriter(wc *websocket.Conn, id []byte, mu chan bool, mt int) *mess
 
 func (u upgradeAndServe) Do(w *messageWriter, r *http.Request) {
 	u.h.ServeHTTP(w, r)
+	w.Status100()
 	w.Flush()
 }
 
@@ -185,5 +192,5 @@ func (a *Application) Begin(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusContinue)
 	w.WriteHeader(http.StatusContinue)
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusContinue)
 }

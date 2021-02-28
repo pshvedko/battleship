@@ -56,8 +56,9 @@
             return
         let code = parseInt(p[1])
         try {
-            handle.get(id)(code, JSON.parse(p[2]))
+            handle.get(id)(code, p[2] ? JSON.parse(p[2]) : null)
         } catch (e) {
+            console.log(e)
         }
         if (Math.floor(code / 100) !== 1)
             handle.delete(id)
