@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/websocket"
 
 	"github.com/pshvedko/battleship/api"
+	"github.com/pshvedko/battleship/api/ws"
 )
 
 func main() {
@@ -20,14 +21,16 @@ func main() {
 		Session: sessions.NewCookieStore(b),
 		Decoder: schema.NewDecoder(),
 	}
-	r := mux.NewRouter()
-	q := r.PathPrefix("/api/v1/").Subrouter()
-	u := websocket.Upgrader{}
 	h := mux.NewRouter()
 	h.HandleFunc("/begin", a.Begin)
-	q.Handle("/websocket", a.UpgradeAndServe(u, h)).Methods(http.MethodGet)
+	w := ws.WebSocket{
+		Updater: websocket.Upgrader{},
+		Handler: h,
+	}
+	r := mux.NewRouter()
 	f := http.FileServer(api.Dir("html"))
 	r.PathPrefix("/").Handler(http.StripPrefix("/", f)).Methods(http.MethodGet, http.MethodHead)
+	r.Use(w.UpgradeMiddleware)
 	r.Use(a.SessionMiddleware)
 	r.Use(a.LoggingMiddleware)
 	err := http.ListenAndServe(":8080", r)
