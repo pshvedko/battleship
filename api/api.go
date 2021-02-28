@@ -55,57 +55,57 @@ func (a *Application) SessionMiddleware(handler http.Handler) http.Handler {
 }
 
 type messageWriter struct {
-	*websocket.Conn
-	id []byte
-	mu chan bool
-	bb bytes.Buffer
-	mt int
-	st int
-	hd http.Header
-	nf bool
+	c      *websocket.Conn
+	id     []byte
+	mu     chan bool
+	buffer bytes.Buffer
+	proto  int
+	status int
+	header http.Header
+	dirty  bool
 }
 
 func (w *messageWriter) Header() http.Header {
-	return w.hd
+	return w.header
 }
 
 func (w *messageWriter) Write(data []byte) (int, error) {
-	w.nf = true
-	return w.bb.Write(data)
+	w.dirty = true
+	return w.buffer.Write(data)
 }
 
 func (w *messageWriter) WriteHeader(status int) {
 	w.Flush()
-	w.nf = true
-	w.st = status
+	w.dirty = true
+	w.status = status
 }
 
 func (w *messageWriter) Flush() {
-	if !w.nf || !<-w.mu {
+	if !w.dirty || !<-w.mu {
 		return
 	}
 	defer func() { w.mu <- true }()
 	m := bytes.Buffer{}
 	_, err := m.Write(w.id)
 	if err == nil {
-		_, err = fmt.Fprintf(&m, "\n%d\n", w.st)
+		_, err = fmt.Fprintf(&m, "\n%d\n", w.status)
 		if err == nil {
-			_, err = w.bb.WriteTo(&m)
+			_, err = w.buffer.WriteTo(&m)
 			if err == nil {
-				err = w.WriteMessage(w.mt, m.Bytes())
+				err = w.c.WriteMessage(w.proto, m.Bytes())
 				if err == nil {
-					w.nf = false
+					w.dirty = false
 					return
 				}
 			}
 		}
 	}
-	w.Close()
+	_ = w.c.Close()
 }
 
 func (w *messageWriter) Status100() {
-	if w.st > 99 && w.st < 200 {
-		w.st += 100
+	if w.status > 99 && w.status < 200 {
+		w.status += 100
 	}
 }
 
@@ -159,22 +159,17 @@ func (u upgradeAndServe) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				return
 			}
-			v := NewMessageWriter(c, p[0], z, t)
-			go u.Do(v, q)
+			go u.Do(&messageWriter{
+				c:      c,
+				id:     p[0],
+				mu:     z,
+				proto:  t,
+				buffer: bytes.Buffer{},
+				status: http.StatusOK,
+				header: http.Header{},
+				dirty:  false,
+			}, q)
 		}
-	}
-}
-
-func NewMessageWriter(wc *websocket.Conn, id []byte, mu chan bool, mt int) *messageWriter {
-	return &messageWriter{
-		Conn: wc,
-		id:   id,
-		mu:   mu,
-		mt:   mt,
-		bb:   bytes.Buffer{},
-		st:   http.StatusOK,
-		hd:   http.Header{},
-		nf:   false,
 	}
 }
 
