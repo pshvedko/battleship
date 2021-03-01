@@ -30,7 +30,8 @@ func (b *battle) get(id uuid.UUID) *game {
 	defer b.mutex.Unlock()
 	g, ok := b.games[id]
 	if !ok {
-		g = New(b.sizes...)
+		g = &game{}
+		g.initialize(b.sizes...)
 		b.games[id] = g
 	}
 	return g

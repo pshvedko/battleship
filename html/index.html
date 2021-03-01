@@ -46,10 +46,11 @@
         if (!handle.has(id))
             return
         let code = parseInt(p[1])
-        try {
-            handle.get(id)(JSON.parse(p[2]))
-        } catch (e) {
-        }
+        if (code < 300)
+            try {
+                handle.get(id)(JSON.parse(p[2]))
+            } catch (e) {
+            }
         if (code >= 200)
             handle.delete(id)
     }
@@ -59,12 +60,12 @@
     }
 
     function onReply(e = {
-        f: Number,
-        x: Number,
-        y: Number,
-        c: Number,
+        F: Number,
+        X: Number,
+        Y: Number,
+        C: Number,
     }) {
-        field[e.f][e.x][e.y].className = clazz[e.c]
+        field[e.F][e.X][e.Y].className = clazz[e.C]
     }
 
     socket.onopen = function () {

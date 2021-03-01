@@ -61,14 +61,14 @@ func (a *Application) PrepareMiddleware(h http.Handler) http.Handler {
 }
 
 type point struct {
-	X int `json:"x"`
-	Y int `json:"y"`
+	X int
+	Y int
 }
 
 type reply struct {
 	point
-	F int `json:"f"`
-	C int `json:"c"`
+	F int
+	C int
 }
 
 func (a *Application) Begin(w http.ResponseWriter, r *http.Request) {
