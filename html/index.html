@@ -19,10 +19,9 @@
                 field[f][i] = []
                 for (let j = 0; j < 10; j++) {
                     let e = document.getElementById(f + '.' + i + '.' + j)
-                    if (f) {
+                    if (f === 1) {
                         e.className = "void"
                         e.onclick = function () {
-                            e.onclick = undefined
                             onClick(f, i, j)
                         }
                     }
@@ -58,12 +57,13 @@
     }
 
     function onReply(e = {
-        F: Number,
-        X: Number,
-        Y: Number,
-        C: Number,
+        F: 0,
+        X: 0,
+        Y: 0,
+        C: 0,
     }) {
         field[e.F][e.X][e.Y].className = clazz[e.C]
+        field[e.F][e.X][e.Y].onclick = undefined
     }
 
     socket.onopen = function () {

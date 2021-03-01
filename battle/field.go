@@ -56,14 +56,17 @@ func (f *field) zero(x, y int) bool {
 	return f[x][y] == 0
 }
 
-func (f *field) point(x int, y int) point {
-	return point(x*10*10 + y*10 + f[x][y])
+func (f *field) point(n, x, y int) point {
+	return point(x*10*10*10 + y*10*10 + f[x][y]*10 + n)
 }
 
-func (f *field) boom(x int, y int) ([]point, int) {
+func (f *field) boom(n, x, y int) []point {
 	if x < 0 || x > 9 || y < 0 || y > 9 {
-		return nil, 0
+		return nil
 	}
-	f[x][y] += 2
-	return nil, f[x][y]
+	if f[x][y] < 2 {
+		f[x][y]++
+		f[x][y]++
+	}
+	return []point{f.point(n, x, y)}
 }

@@ -54,25 +54,21 @@ td.void:hover {
 
 .free {
     background-color: lightcyan;
-    cursor: not-allowed;
     color: lightcyan;
 }
 
 .boom {
     background-color: firebrick;
-    cursor: not-allowed;
     color: firebrick;
 }
 
 .lose {
     background-color: lightcyan;
-    cursor: not-allowed;
     color: slategray;
 }
 
 .boat {
     background-color: limegreen;
-    cursor: not-allowed;
     color: limegreen;
 }
 

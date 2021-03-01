@@ -77,18 +77,12 @@ func (a *Application) Begin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	j := json.NewEncoder(w)
-	p := a.Service.Own(s)
-	for _, z := range p {
-		w.WriteHeader(http.StatusOK)
-		j.Encode(reply{F: 0, point: point{X: z.X(), Y: z.Y()}, C: z.C()})
-	}
-	q := a.Service.Alien(s)
-	for _, z := range q {
-		if z.C() < 2 {
+	for _, z := range a.Service.Field(s) {
+		if z.F() > 0 && z.C() < 2 {
 			continue
 		}
 		w.WriteHeader(http.StatusOK)
-		j.Encode(reply{F: 1, point: point{X: z.X(), Y: z.Y()}, C: z.C()})
+		j.Encode(reply{F: z.F(), point: point{X: z.X(), Y: z.Y()}, C: z.C()})
 	}
 }
 
@@ -100,11 +94,8 @@ func (a *Application) Click(w http.ResponseWriter, r *http.Request) {
 	var q point
 	json.NewDecoder(r.Body).Decode(&q)
 	j := json.NewEncoder(w)
-	p, c := a.Service.Shot(s, q.X, q.Y)
-	for _, z := range p {
+	for _, z := range a.Service.Click(s, q.X, q.Y) {
 		w.WriteHeader(http.StatusOK)
-		j.Encode(reply{F: 0, point: point{X: z.X(), Y: z.Y()}, C: z.C()})
+		j.Encode(reply{F: z.F(), point: point{X: z.X(), Y: z.Y()}, C: z.C()})
 	}
-	w.WriteHeader(http.StatusOK)
-	j.Encode(reply{F: 1, point: q, C: c})
 }

@@ -6,9 +6,8 @@ import (
 )
 
 type Battle interface {
-	Own(id uuid.UUID) []point
-	Alien(id uuid.UUID) []point
-	Shot(id uuid.UUID, x, y int) ([]point, int)
+	Field(id uuid.UUID) []point
+	Click(id uuid.UUID, x, y int) []point
 }
 
 type battle struct {
@@ -37,14 +36,10 @@ func (b *battle) get(id uuid.UUID) *game {
 	return g
 }
 
-func (b *battle) Own(id uuid.UUID) []point {
-	return b.get(id).Field(0)
+func (b *battle) Field(id uuid.UUID) []point {
+	return b.get(id).Field()
 }
 
-func (b *battle) Alien(id uuid.UUID) []point {
-	return b.get(id).Field(1)
-}
-
-func (b *battle) Shot(id uuid.UUID, x, y int) ([]point, int) {
+func (b *battle) Click(id uuid.UUID, x, y int) []point {
 	return b.get(id).Click(x, y)
 }
