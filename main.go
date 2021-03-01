@@ -17,9 +17,9 @@ import (
 func main() {
 	b := []byte("TODO_SUPER_SECRET_KEY_1234567890")
 	a := api.Application{
+		Service: battle.NewBattle(10, 10, 4, 3, 3, 2, 2, 2, 1, 1, 1, 1),
 		Logging: log.New(os.Stderr, "", log.LstdFlags),
 		Session: sessions.NewCookieStore(b),
-		Service: battle.NewBattle(10, 10, 4, 3, 3, 2, 2, 2, 1, 1, 1, 1),
 	}
 	h := mux.NewRouter()
 	h.HandleFunc("/begin", a.Begin)

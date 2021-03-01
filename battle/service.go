@@ -5,7 +5,7 @@ import (
 	"sync"
 )
 
-type Game interface {
+type Battle interface {
 	Get(id uuid.UUID) *game
 }
 
