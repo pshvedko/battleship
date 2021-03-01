@@ -37,22 +37,20 @@
     let handle = new Map
 
     function query(done, id, method, path, body) {
-        socket.send([id, method, path, JSON.stringify(body)].join('\r\n'))
-        handle.set(id, done)
+        socket.send([id.toString(), method, path, JSON.stringify(body)].join('\r\n'))
+        handle.set(id.toString(), done)
     }
 
     function reply(p) {
-        let id = parseInt(p[0])
-        if (!handle.has(id))
+        if (!handle.has(p[0]))
             return
-        let code = parseInt(p[1])
-        if (code < 300)
+        if (p[1] === '200')
             try {
-                handle.get(id)(JSON.parse(p[2]))
+                handle.get(p[0])(JSON.parse(p[3]))
             } catch (e) {
             }
-        if (code >= 200)
-            handle.delete(id)
+        if (p[2] === '#')
+            handle.delete(p[0])
     }
 
     function onClick(f, x, y) {

@@ -61,7 +61,7 @@ func (a WebSocket) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			}
 			go func(w *messageWriter, r *http.Request) {
 				a.Handler.ServeHTTP(w, r)
-				w.Status100()
+				w.End()
 				w.Flush()
 			}(&messageWriter{
 				c:      c,
@@ -72,6 +72,7 @@ func (a WebSocket) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				status: http.StatusOK,
 				header: http.Header{},
 				dirty:  false,
+				end:    '+',
 			}, q)
 		}
 	}

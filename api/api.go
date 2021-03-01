@@ -79,7 +79,7 @@ func (a *Application) Begin(w http.ResponseWriter, r *http.Request) {
 	j := json.NewEncoder(w)
 	p := a.Service.Own(s)
 	for _, z := range p {
-		w.WriteHeader(http.StatusContinue)
+		w.WriteHeader(http.StatusOK)
 		j.Encode(reply{F: 0, point: point{X: z.X(), Y: z.Y()}, C: z.C()})
 	}
 }
@@ -94,7 +94,7 @@ func (a *Application) Click(w http.ResponseWriter, r *http.Request) {
 	j := json.NewEncoder(w)
 	p, c := a.Service.Shot(s, q.X, q.Y)
 	for _, z := range p {
-		w.WriteHeader(http.StatusContinue)
+		w.WriteHeader(http.StatusOK)
 		j.Encode(reply{F: 0, point: point{X: z.X(), Y: z.Y()}, C: z.C()})
 	}
 	w.WriteHeader(http.StatusOK)

@@ -17,6 +17,7 @@ type messageWriter struct {
 	status int
 	header http.Header
 	dirty  bool
+	end    rune
 }
 
 func (w *messageWriter) Header() http.Header {
@@ -42,7 +43,7 @@ func (w *messageWriter) Flush() {
 	m := bytes.Buffer{}
 	_, err := m.Write(w.id)
 	if err == nil {
-		_, err = fmt.Fprintf(&m, "\n%d\n", w.status)
+		_, err = fmt.Fprintf(&m, "\n%d\n%c\n", w.status, w.end)
 		if err == nil {
 			_, err = w.buffer.WriteTo(&m)
 			if err == nil {
@@ -57,8 +58,6 @@ func (w *messageWriter) Flush() {
 	_ = w.c.Close()
 }
 
-func (w *messageWriter) Status100() {
-	if w.status > 99 && w.status < 200 {
-		w.status += 100
-	}
+func (w *messageWriter) End() {
+	w.end = '#'
 }
