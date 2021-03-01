@@ -25,6 +25,7 @@ function initField() {
     }
 }
 
+let end = 20;
 let seq = 0
 let socket = new WebSocket(location.origin.replace(/^http/, 'ws'))
 let handle = new Map
@@ -58,6 +59,11 @@ function onReply(e = {
 }) {
     field[e.F][e.X][e.Y].className = clazz[e.C]
     field[e.F][e.X][e.Y].onclick = undefined
+    if (e.F === 1 && e.C === 3) {
+        end--
+        if (!end)
+            setTimeout(alert, 0, "END")
+    }
 }
 
 socket.onopen = function () {

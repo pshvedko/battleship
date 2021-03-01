@@ -145,5 +145,5 @@ func (f *field) update(a, b, n, x, y int) (points []point) {
 }
 
 func (f *field) border(x int, y int) bool {
-	return x < 0 || x > len(f) || y < 0 || y > len(f[x])
+	return x < 0 || x > 9 || y < 0 || y > 9
 }
