@@ -20,8 +20,8 @@ func init() {
 
 type Application struct {
 	Logging *log.Logger
-	Session *sessions.CookieStore
-	Service *battle.Battle
+	Session sessions.Store
+	Service battle.Game
 }
 
 func (a *Application) SessionMiddleware(h http.Handler) http.Handler {

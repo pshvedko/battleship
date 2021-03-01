@@ -5,21 +5,25 @@ import (
 	"sync"
 )
 
-type Battle struct {
+type Game interface {
+	Get(id uuid.UUID) *game
+}
+
+type battle struct {
 	mutex sync.Mutex
 	games map[uuid.UUID]*game
 	sizes []int
 }
 
-func NewBattle(height, width int, sizes ...int) *Battle {
-	return &Battle{
+func NewBattle(height, width int, sizes ...int) *battle {
+	return &battle{
 		mutex: sync.Mutex{},
 		games: map[uuid.UUID]*game{},
 		sizes: sizes,
 	}
 }
 
-func (b *Battle) Get(id uuid.UUID) *game {
+func (b *battle) Get(id uuid.UUID) *game {
 	b.mutex.Lock()
 	defer b.mutex.Unlock()
 	g, ok := b.games[id]
