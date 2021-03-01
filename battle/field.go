@@ -1,0 +1,57 @@
+package battle
+
+import "math/rand"
+
+type field [10][10]int
+
+func (f *field) initialize(sizes ...int) {
+	for _, size := range sizes {
+		f.add(size)
+	}
+}
+
+func (f *field) add(size int) {
+	var h = [4]int{0, 0, 1, -1}
+	var w = [4]int{1, -1, 0, 0}
+	for {
+		x := rand.Int() % 10
+		y := rand.Int() % 10
+		z := rand.Int() % 4
+		if f.try(x, y, h[z], w[z], size) {
+			return
+		}
+	}
+}
+
+func (f *field) try(x int, y int, h int, w int, size int) bool {
+	if size == 0 {
+		return true
+	} else if x < 0 || x > 9 || y < 0 || y > 9 {
+		return false
+	} else if f.around(x, y) {
+		if f.try(x+h, y+w, h, w, size-1) {
+			f[x][y] = 1
+			return true
+		}
+	}
+	return false
+}
+
+func (f *field) around(x, y int) bool {
+	return f.compare(x, y) &&
+		f.compare(x-1, y) &&
+		f.compare(x+1, y) &&
+		f.compare(x, y-1) &&
+		f.compare(x, y+1) &&
+		f.compare(x+1, y+1) &&
+		f.compare(x-1, y+1) &&
+		f.compare(x+1, y-1) &&
+		f.compare(x-1, y-1)
+}
+
+func (f *field) compare(x, y int) bool {
+	if x < 0 || x > 9 || y < 0 || y > 9 {
+		return true
+	}
+	return f[x][y] == 0
+}

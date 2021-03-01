@@ -9,36 +9,27 @@
 
 <script lang="javascript">
 
-    const classNameVoid = "void"
-    const classNameBoom = "boom"
-    const classNameFree = "free"
-    const classNameLose = "lose"
-    const field = {R: [], L: []};
-    const clazz = {0: classNameVoid, 1: classNameBoom, 2: classNameFree, 3: classNameLose}
+    const field = [];
+    const clazz = {0: "free", 1: "boat", 2: "lose", 3: "boom"}
 
     function initField() {
-        for (let m in field) {
+        for (let f = 0; f < 2; f++) {
+            field[f] = []
             for (let i = 0; i < 10; i++) {
-                field[m][i] = []
+                field[f][i] = []
                 for (let j = 0; j < 10; j++) {
-                    let e = document.getElementById(m + '.' + i + '.' + j)
-                    switch (m) {
-                        case 'R':
-                            e.className = classNameVoid
-                            e.onclick = function () {
-                                onClick(e)
-                            }
-                            break
+                    let e = document.getElementById(f + '.' + i + '.' + j)
+                    if (f) {
+                        e.className = "void"
+                        e.onclick = function () {
+                            e.onclick = undefined
+                            onClick(f, i, j)
+                        }
                     }
-                    field[m][i].push(e)
+                    field[f][i][j] = e
                 }
             }
         }
-    }
-
-    function onClick(e) {
-        e.className = classNameFree
-        e.onclick = undefined
     }
 
     let seq = 0
@@ -56,20 +47,28 @@
             return
         let code = parseInt(p[1])
         try {
-            handle.get(id)(code, p[2] ? JSON.parse(p[2]) : null)
+            handle.get(id)(JSON.parse(p[2]))
         } catch (e) {
-            console.log(e)
         }
-        if (Math.floor(code / 100) !== 1)
+        if (code >= 200)
             handle.delete(id)
     }
 
-    function onBegin(code, e) {
-        console.log(code, e)
+    function onClick(f, x, y) {
+        query(onReply, seq++, "GET", "/click", {X: x, Y: y})
+    }
+
+    function onReply(e = {
+        f: Number,
+        x: Number,
+        y: Number,
+        c: Number,
+    }) {
+        field[e.f][e.x][e.y].className = clazz[e.c]
     }
 
     socket.onopen = function () {
-        query(onBegin, seq++, "GET", "/begin")
+        query(onReply, seq++, "GET", "/begin")
     }
 
     socket.onmessage = function (e) {
@@ -94,248 +93,248 @@
     <div class="field">
         <table>
             <tr>
-                <td id="L.0.0"></td>
-                <td id="L.0.1"></td>
-                <td id="L.0.2"></td>
-                <td id="L.0.3"></td>
-                <td id="L.0.4"></td>
-                <td id="L.0.5"></td>
-                <td id="L.0.6"></td>
-                <td id="L.0.7"></td>
-                <td id="L.0.8"></td>
-                <td id="L.0.9"></td>
+                <td id="0.0.0"></td>
+                <td id="0.0.1"></td>
+                <td id="0.0.2"></td>
+                <td id="0.0.3"></td>
+                <td id="0.0.4"></td>
+                <td id="0.0.5"></td>
+                <td id="0.0.6"></td>
+                <td id="0.0.7"></td>
+                <td id="0.0.8"></td>
+                <td id="0.0.9"></td>
             </tr>
             <tr>
-                <td id="L.1.0"></td>
-                <td id="L.1.1"></td>
-                <td id="L.1.2"></td>
-                <td id="L.1.3"></td>
-                <td id="L.1.4"></td>
-                <td id="L.1.5"></td>
-                <td id="L.1.6"></td>
-                <td id="L.1.7"></td>
-                <td id="L.1.8"></td>
-                <td id="L.1.9"></td>
+                <td id="0.1.0"></td>
+                <td id="0.1.1"></td>
+                <td id="0.1.2"></td>
+                <td id="0.1.3"></td>
+                <td id="0.1.4"></td>
+                <td id="0.1.5"></td>
+                <td id="0.1.6"></td>
+                <td id="0.1.7"></td>
+                <td id="0.1.8"></td>
+                <td id="0.1.9"></td>
             </tr>
             <tr>
-                <td id="L.2.0"></td>
-                <td id="L.2.1"></td>
-                <td id="L.2.2"></td>
-                <td id="L.2.3"></td>
-                <td id="L.2.4"></td>
-                <td id="L.2.5"></td>
-                <td id="L.2.6"></td>
-                <td id="L.2.7"></td>
-                <td id="L.2.8"></td>
-                <td id="L.2.9"></td>
+                <td id="0.2.0"></td>
+                <td id="0.2.1"></td>
+                <td id="0.2.2"></td>
+                <td id="0.2.3"></td>
+                <td id="0.2.4"></td>
+                <td id="0.2.5"></td>
+                <td id="0.2.6"></td>
+                <td id="0.2.7"></td>
+                <td id="0.2.8"></td>
+                <td id="0.2.9"></td>
             </tr>
             <tr>
-                <td id="L.3.0"></td>
-                <td id="L.3.1"></td>
-                <td id="L.3.2"></td>
-                <td id="L.3.3"></td>
-                <td id="L.3.4"></td>
-                <td id="L.3.5"></td>
-                <td id="L.3.6"></td>
-                <td id="L.3.7"></td>
-                <td id="L.3.8"></td>
-                <td id="L.3.9"></td>
+                <td id="0.3.0"></td>
+                <td id="0.3.1"></td>
+                <td id="0.3.2"></td>
+                <td id="0.3.3"></td>
+                <td id="0.3.4"></td>
+                <td id="0.3.5"></td>
+                <td id="0.3.6"></td>
+                <td id="0.3.7"></td>
+                <td id="0.3.8"></td>
+                <td id="0.3.9"></td>
             </tr>
             <tr>
-                <td id="L.4.0"></td>
-                <td id="L.4.1"></td>
-                <td id="L.4.2"></td>
-                <td id="L.4.3"></td>
-                <td id="L.4.4"></td>
-                <td id="L.4.5"></td>
-                <td id="L.4.6"></td>
-                <td id="L.4.7"></td>
-                <td id="L.4.8"></td>
-                <td id="L.4.9"></td>
+                <td id="0.4.0"></td>
+                <td id="0.4.1"></td>
+                <td id="0.4.2"></td>
+                <td id="0.4.3"></td>
+                <td id="0.4.4"></td>
+                <td id="0.4.5"></td>
+                <td id="0.4.6"></td>
+                <td id="0.4.7"></td>
+                <td id="0.4.8"></td>
+                <td id="0.4.9"></td>
             </tr>
             <tr>
-                <td id="L.5.0"></td>
-                <td id="L.5.1"></td>
-                <td id="L.5.2"></td>
-                <td id="L.5.3"></td>
-                <td id="L.5.4"></td>
-                <td id="L.5.5"></td>
-                <td id="L.5.6"></td>
-                <td id="L.5.7"></td>
-                <td id="L.5.8"></td>
-                <td id="L.5.9"></td>
+                <td id="0.5.0"></td>
+                <td id="0.5.1"></td>
+                <td id="0.5.2"></td>
+                <td id="0.5.3"></td>
+                <td id="0.5.4"></td>
+                <td id="0.5.5"></td>
+                <td id="0.5.6"></td>
+                <td id="0.5.7"></td>
+                <td id="0.5.8"></td>
+                <td id="0.5.9"></td>
             </tr>
             <tr>
-                <td id="L.6.0"></td>
-                <td id="L.6.1"></td>
-                <td id="L.6.2"></td>
-                <td id="L.6.3"></td>
-                <td id="L.6.4"></td>
-                <td id="L.6.5"></td>
-                <td id="L.6.6"></td>
-                <td id="L.6.7"></td>
-                <td id="L.6.8"></td>
-                <td id="L.6.9"></td>
+                <td id="0.6.0"></td>
+                <td id="0.6.1"></td>
+                <td id="0.6.2"></td>
+                <td id="0.6.3"></td>
+                <td id="0.6.4"></td>
+                <td id="0.6.5"></td>
+                <td id="0.6.6"></td>
+                <td id="0.6.7"></td>
+                <td id="0.6.8"></td>
+                <td id="0.6.9"></td>
             </tr>
             <tr>
-                <td id="L.7.0"></td>
-                <td id="L.7.1"></td>
-                <td id="L.7.2"></td>
-                <td id="L.7.3"></td>
-                <td id="L.7.4"></td>
-                <td id="L.7.5"></td>
-                <td id="L.7.6"></td>
-                <td id="L.7.7"></td>
-                <td id="L.7.8"></td>
-                <td id="L.7.9"></td>
+                <td id="0.7.0"></td>
+                <td id="0.7.1"></td>
+                <td id="0.7.2"></td>
+                <td id="0.7.3"></td>
+                <td id="0.7.4"></td>
+                <td id="0.7.5"></td>
+                <td id="0.7.6"></td>
+                <td id="0.7.7"></td>
+                <td id="0.7.8"></td>
+                <td id="0.7.9"></td>
             </tr>
             <tr>
-                <td id="L.8.0"></td>
-                <td id="L.8.1"></td>
-                <td id="L.8.2"></td>
-                <td id="L.8.3"></td>
-                <td id="L.8.4"></td>
-                <td id="L.8.5"></td>
-                <td id="L.8.6"></td>
-                <td id="L.8.7"></td>
-                <td id="L.8.8"></td>
-                <td id="L.8.9"></td>
+                <td id="0.8.0"></td>
+                <td id="0.8.1"></td>
+                <td id="0.8.2"></td>
+                <td id="0.8.3"></td>
+                <td id="0.8.4"></td>
+                <td id="0.8.5"></td>
+                <td id="0.8.6"></td>
+                <td id="0.8.7"></td>
+                <td id="0.8.8"></td>
+                <td id="0.8.9"></td>
             </tr>
             <tr>
-                <td id="L.9.0"></td>
-                <td id="L.9.1"></td>
-                <td id="L.9.2"></td>
-                <td id="L.9.3"></td>
-                <td id="L.9.4"></td>
-                <td id="L.9.5"></td>
-                <td id="L.9.6"></td>
-                <td id="L.9.7"></td>
-                <td id="L.9.8"></td>
-                <td id="L.9.9"></td>
+                <td id="0.9.0"></td>
+                <td id="0.9.1"></td>
+                <td id="0.9.2"></td>
+                <td id="0.9.3"></td>
+                <td id="0.9.4"></td>
+                <td id="0.9.5"></td>
+                <td id="0.9.6"></td>
+                <td id="0.9.7"></td>
+                <td id="0.9.8"></td>
+                <td id="0.9.9"></td>
             </tr>
         </table>
     </div>
     <div class="field">
         <table>
             <tr>
-                <td id="R.0.0"></td>
-                <td id="R.0.1"></td>
-                <td id="R.0.2"></td>
-                <td id="R.0.3"></td>
-                <td id="R.0.4"></td>
-                <td id="R.0.5"></td>
-                <td id="R.0.6"></td>
-                <td id="R.0.7"></td>
-                <td id="R.0.8"></td>
-                <td id="R.0.9"></td>
+                <td id="1.0.0"></td>
+                <td id="1.0.1"></td>
+                <td id="1.0.2"></td>
+                <td id="1.0.3"></td>
+                <td id="1.0.4"></td>
+                <td id="1.0.5"></td>
+                <td id="1.0.6"></td>
+                <td id="1.0.7"></td>
+                <td id="1.0.8"></td>
+                <td id="1.0.9"></td>
             </tr>
             <tr>
-                <td id="R.1.0"></td>
-                <td id="R.1.1"></td>
-                <td id="R.1.2"></td>
-                <td id="R.1.3"></td>
-                <td id="R.1.4"></td>
-                <td id="R.1.5"></td>
-                <td id="R.1.6"></td>
-                <td id="R.1.7"></td>
-                <td id="R.1.8"></td>
-                <td id="R.1.9"></td>
+                <td id="1.1.0"></td>
+                <td id="1.1.1"></td>
+                <td id="1.1.2"></td>
+                <td id="1.1.3"></td>
+                <td id="1.1.4"></td>
+                <td id="1.1.5"></td>
+                <td id="1.1.6"></td>
+                <td id="1.1.7"></td>
+                <td id="1.1.8"></td>
+                <td id="1.1.9"></td>
             </tr>
             <tr>
-                <td id="R.2.0"></td>
-                <td id="R.2.1"></td>
-                <td id="R.2.2"></td>
-                <td id="R.2.3"></td>
-                <td id="R.2.4"></td>
-                <td id="R.2.5"></td>
-                <td id="R.2.6"></td>
-                <td id="R.2.7"></td>
-                <td id="R.2.8"></td>
-                <td id="R.2.9"></td>
+                <td id="1.2.0"></td>
+                <td id="1.2.1"></td>
+                <td id="1.2.2"></td>
+                <td id="1.2.3"></td>
+                <td id="1.2.4"></td>
+                <td id="1.2.5"></td>
+                <td id="1.2.6"></td>
+                <td id="1.2.7"></td>
+                <td id="1.2.8"></td>
+                <td id="1.2.9"></td>
             </tr>
             <tr>
-                <td id="R.3.0"></td>
-                <td id="R.3.1"></td>
-                <td id="R.3.2"></td>
-                <td id="R.3.3"></td>
-                <td id="R.3.4"></td>
-                <td id="R.3.5"></td>
-                <td id="R.3.6"></td>
-                <td id="R.3.7"></td>
-                <td id="R.3.8"></td>
-                <td id="R.3.9"></td>
+                <td id="1.3.0"></td>
+                <td id="1.3.1"></td>
+                <td id="1.3.2"></td>
+                <td id="1.3.3"></td>
+                <td id="1.3.4"></td>
+                <td id="1.3.5"></td>
+                <td id="1.3.6"></td>
+                <td id="1.3.7"></td>
+                <td id="1.3.8"></td>
+                <td id="1.3.9"></td>
             </tr>
             <tr>
-                <td id="R.4.0"></td>
-                <td id="R.4.1"></td>
-                <td id="R.4.2"></td>
-                <td id="R.4.3"></td>
-                <td id="R.4.4"></td>
-                <td id="R.4.5"></td>
-                <td id="R.4.6"></td>
-                <td id="R.4.7"></td>
-                <td id="R.4.8"></td>
-                <td id="R.4.9"></td>
+                <td id="1.4.0"></td>
+                <td id="1.4.1"></td>
+                <td id="1.4.2"></td>
+                <td id="1.4.3"></td>
+                <td id="1.4.4"></td>
+                <td id="1.4.5"></td>
+                <td id="1.4.6"></td>
+                <td id="1.4.7"></td>
+                <td id="1.4.8"></td>
+                <td id="1.4.9"></td>
             </tr>
             <tr>
-                <td id="R.5.0"></td>
-                <td id="R.5.1"></td>
-                <td id="R.5.2"></td>
-                <td id="R.5.3"></td>
-                <td id="R.5.4"></td>
-                <td id="R.5.5"></td>
-                <td id="R.5.6"></td>
-                <td id="R.5.7"></td>
-                <td id="R.5.8"></td>
-                <td id="R.5.9"></td>
+                <td id="1.5.0"></td>
+                <td id="1.5.1"></td>
+                <td id="1.5.2"></td>
+                <td id="1.5.3"></td>
+                <td id="1.5.4"></td>
+                <td id="1.5.5"></td>
+                <td id="1.5.6"></td>
+                <td id="1.5.7"></td>
+                <td id="1.5.8"></td>
+                <td id="1.5.9"></td>
             </tr>
             <tr>
-                <td id="R.6.0"></td>
-                <td id="R.6.1"></td>
-                <td id="R.6.2"></td>
-                <td id="R.6.3"></td>
-                <td id="R.6.4"></td>
-                <td id="R.6.5"></td>
-                <td id="R.6.6"></td>
-                <td id="R.6.7"></td>
-                <td id="R.6.8"></td>
-                <td id="R.6.9"></td>
+                <td id="1.6.0"></td>
+                <td id="1.6.1"></td>
+                <td id="1.6.2"></td>
+                <td id="1.6.3"></td>
+                <td id="1.6.4"></td>
+                <td id="1.6.5"></td>
+                <td id="1.6.6"></td>
+                <td id="1.6.7"></td>
+                <td id="1.6.8"></td>
+                <td id="1.6.9"></td>
             </tr>
             <tr>
-                <td id="R.7.0"></td>
-                <td id="R.7.1"></td>
-                <td id="R.7.2"></td>
-                <td id="R.7.3"></td>
-                <td id="R.7.4"></td>
-                <td id="R.7.5"></td>
-                <td id="R.7.6"></td>
-                <td id="R.7.7"></td>
-                <td id="R.7.8"></td>
-                <td id="R.7.9"></td>
+                <td id="1.7.0"></td>
+                <td id="1.7.1"></td>
+                <td id="1.7.2"></td>
+                <td id="1.7.3"></td>
+                <td id="1.7.4"></td>
+                <td id="1.7.5"></td>
+                <td id="1.7.6"></td>
+                <td id="1.7.7"></td>
+                <td id="1.7.8"></td>
+                <td id="1.7.9"></td>
             </tr>
             <tr>
-                <td id="R.8.0"></td>
-                <td id="R.8.1"></td>
-                <td id="R.8.2"></td>
-                <td id="R.8.3"></td>
-                <td id="R.8.4"></td>
-                <td id="R.8.5"></td>
-                <td id="R.8.6"></td>
-                <td id="R.8.7"></td>
-                <td id="R.8.8"></td>
-                <td id="R.8.9"></td>
+                <td id="1.8.0"></td>
+                <td id="1.8.1"></td>
+                <td id="1.8.2"></td>
+                <td id="1.8.3"></td>
+                <td id="1.8.4"></td>
+                <td id="1.8.5"></td>
+                <td id="1.8.6"></td>
+                <td id="1.8.7"></td>
+                <td id="1.8.8"></td>
+                <td id="1.8.9"></td>
             </tr>
             <tr>
-                <td id="R.9.0"></td>
-                <td id="R.9.1"></td>
-                <td id="R.9.2"></td>
-                <td id="R.9.3"></td>
-                <td id="R.9.4"></td>
-                <td id="R.9.5"></td>
-                <td id="R.9.6"></td>
-                <td id="R.9.7"></td>
-                <td id="R.9.8"></td>
-                <td id="R.9.9"></td>
+                <td id="1.9.0"></td>
+                <td id="1.9.1"></td>
+                <td id="1.9.2"></td>
+                <td id="1.9.3"></td>
+                <td id="1.9.4"></td>
+                <td id="1.9.5"></td>
+                <td id="1.9.6"></td>
+                <td id="1.9.7"></td>
+                <td id="1.9.8"></td>
+                <td id="1.9.9"></td>
             </tr>
         </table>
     </div>

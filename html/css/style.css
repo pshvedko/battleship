@@ -28,6 +28,7 @@ table {
     border-spacing: 0;
     border: cornflowerblue 1px solid;
     margin: 1em;
+    cursor: pointer;
 }
 
 td {
@@ -46,19 +47,27 @@ td.void:hover {
 }
 
 .void {
-    cursor: pointer;
+
 }
 
 .free {
     background-color: lightcyan;
+    cursor: not-allowed;
 }
 
 .boom {
     background-color: firebrick;
+    cursor: not-allowed;
 }
 
 .lose {
-    background-color: darksalmon;
+    background-color: burlywood;
+    cursor: not-allowed;
+}
+
+.boat {
+    background-color: limegreen;
+    cursor: not-allowed;
 }
 
 .copy {

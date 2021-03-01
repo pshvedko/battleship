@@ -1,12 +1,12 @@
 package main
 
 import (
+	"github.com/pshvedko/battleship/battle"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/gorilla/mux"
-	"github.com/gorilla/schema"
 	"github.com/gorilla/sessions"
 	"github.com/gorilla/websocket"
 
@@ -19,10 +19,12 @@ func main() {
 	a := api.Application{
 		Logging: log.New(os.Stderr, "", log.LstdFlags),
 		Session: sessions.NewCookieStore(b),
-		Decoder: schema.NewDecoder(),
+		Service: battle.NewBattle(10, 10, 4, 3, 3, 2, 2, 2, 1, 1, 1, 1),
 	}
 	h := mux.NewRouter()
 	h.HandleFunc("/begin", a.Begin)
+	h.HandleFunc("/click", a.Click)
+	h.Use(a.PrepareMiddleware)
 	w := ws.WebSocket{
 		Updater: websocket.Upgrader{},
 		Handler: h,
