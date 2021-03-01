@@ -55,3 +55,7 @@ func (f *field) compare(x, y int) bool {
 	}
 	return f[x][y] == 0
 }
+
+func (f *field) point(x int, y int) point {
+	return point(x*10*10 + y*10 + f[x][y])
+}

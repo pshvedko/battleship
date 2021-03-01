@@ -6,7 +6,9 @@ import (
 )
 
 type Battle interface {
-	Get(id uuid.UUID) *game
+	Own(id uuid.UUID) []point
+	Alien(id uuid.UUID) []point
+	Shot(id uuid.UUID, x, y int) ([]point, int)
 }
 
 type battle struct {
@@ -15,7 +17,7 @@ type battle struct {
 	sizes []int
 }
 
-func NewBattle(height, width int, sizes ...int) *battle {
+func NewBattle(sizes ...int) *battle {
 	return &battle{
 		mutex: sync.Mutex{},
 		games: map[uuid.UUID]*game{},
@@ -23,7 +25,7 @@ func NewBattle(height, width int, sizes ...int) *battle {
 	}
 }
 
-func (b *battle) Get(id uuid.UUID) *game {
+func (b *battle) get(id uuid.UUID) *game {
 	b.mutex.Lock()
 	defer b.mutex.Unlock()
 	g, ok := b.games[id]
@@ -32,4 +34,16 @@ func (b *battle) Get(id uuid.UUID) *game {
 		b.games[id] = g
 	}
 	return g
+}
+
+func (b *battle) Own(id uuid.UUID) []point {
+	return b.get(id).Field(0)
+}
+
+func (b *battle) Alien(id uuid.UUID) []point {
+	return b.get(id).Field(1)
+}
+
+func (b *battle) Shot(id uuid.UUID, x, y int) ([]point, int) {
+	return b.get(id).Click(x, y)
 }

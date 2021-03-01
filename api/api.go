@@ -72,23 +72,31 @@ type reply struct {
 }
 
 func (a *Application) Begin(w http.ResponseWriter, r *http.Request) {
-	g := a.Service.Get(r.Context().Value("sid").(uuid.UUID))
-	g.Lock()
-	defer g.Unlock()
+	s, ok := r.Context().Value("sid").(uuid.UUID)
+	if !ok {
+		return
+	}
 	j := json.NewEncoder(w)
-	for x, f := range g.Field0() {
-		for y, c := range f {
-			w.WriteHeader(http.StatusContinue)
-			j.Encode(reply{F: 0, point: point{X: x, Y: y}, C: c})
-		}
+	p := a.Service.Own(s)
+	for _, z := range p {
+		w.WriteHeader(http.StatusContinue)
+		j.Encode(reply{F: 0, point: point{X: z.X(), Y: z.Y()}, C: z.C()})
 	}
 }
 
 func (a *Application) Click(w http.ResponseWriter, r *http.Request) {
-	g := a.Service.Get(r.Context().Value("sid").(uuid.UUID))
-	g.Lock()
-	defer g.Unlock()
-	var p point
-	json.NewDecoder(r.Body).Decode(&p)
-	json.NewEncoder(w).Encode(reply{F: 1, point: p, C: 0})
+	s, ok := r.Context().Value("sid").(uuid.UUID)
+	if !ok {
+		return
+	}
+	var q point
+	json.NewDecoder(r.Body).Decode(&q)
+	j := json.NewEncoder(w)
+	p, c := a.Service.Shot(s, q.X, q.Y)
+	for _, z := range p {
+		w.WriteHeader(http.StatusContinue)
+		j.Encode(reply{F: 0, point: point{X: z.X(), Y: z.Y()}, C: z.C()})
+	}
+	w.WriteHeader(http.StatusOK)
+	j.Encode(reply{F: 1, point: q, C: c})
 }

@@ -16,10 +16,19 @@ func New(sizes ...int) *game {
 	return g
 }
 
-func (g *game) Field0() *field {
-	return &g.fields[0]
+func (g *game) Field(n int) (points []point) {
+	g.Lock()
+	defer g.Unlock()
+	for x := range g.fields[n] {
+		for y := range g.fields[n][x] {
+			points = append(points, g.fields[n].point(x, y))
+		}
+	}
+	return
 }
 
-func (g *game) Field1() *field {
-	return &g.fields[1]
+func (g *game) Click(x int, y int) (points []point, class int) {
+	g.Lock()
+	defer g.Unlock()
+	return nil, 0
 }
