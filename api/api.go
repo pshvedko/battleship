@@ -82,6 +82,14 @@ func (a *Application) Begin(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		j.Encode(reply{F: 0, point: point{X: z.X(), Y: z.Y()}, C: z.C()})
 	}
+	q := a.Service.Alien(s)
+	for _, z := range q {
+		if z.C() < 2 {
+			continue
+		}
+		w.WriteHeader(http.StatusOK)
+		j.Encode(reply{F: 1, point: point{X: z.X(), Y: z.Y()}, C: z.C()})
+	}
 }
 
 func (a *Application) Click(w http.ResponseWriter, r *http.Request) {

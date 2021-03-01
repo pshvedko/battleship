@@ -28,5 +28,5 @@ func (g *game) Field(n int) (points []point) {
 func (g *game) Click(x int, y int) (points []point, class int) {
 	g.mutex.Lock()
 	defer g.mutex.Unlock()
-	return nil, 0
+	return g.fields[1].boom(x, y)
 }

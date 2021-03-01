@@ -38,18 +38,18 @@ func (f *field) try(x int, y int, h int, w int, size int) bool {
 }
 
 func (f *field) around(x, y int) bool {
-	return f.compare(x, y) &&
-		f.compare(x-1, y) &&
-		f.compare(x+1, y) &&
-		f.compare(x, y-1) &&
-		f.compare(x, y+1) &&
-		f.compare(x+1, y+1) &&
-		f.compare(x-1, y+1) &&
-		f.compare(x+1, y-1) &&
-		f.compare(x-1, y-1)
+	return f.zero(x, y) &&
+		f.zero(x-1, y) &&
+		f.zero(x+1, y) &&
+		f.zero(x, y-1) &&
+		f.zero(x, y+1) &&
+		f.zero(x+1, y+1) &&
+		f.zero(x-1, y+1) &&
+		f.zero(x+1, y-1) &&
+		f.zero(x-1, y-1)
 }
 
-func (f *field) compare(x, y int) bool {
+func (f *field) zero(x, y int) bool {
 	if x < 0 || x > 9 || y < 0 || y > 9 {
 		return true
 	}
@@ -58,4 +58,12 @@ func (f *field) compare(x, y int) bool {
 
 func (f *field) point(x int, y int) point {
 	return point(x*10*10 + y*10 + f[x][y])
+}
+
+func (f *field) boom(x int, y int) ([]point, int) {
+	if x < 0 || x > 9 || y < 0 || y > 9 {
+		return nil, 0
+	}
+	f[x][y] += 2
+	return nil, f[x][y]
 }

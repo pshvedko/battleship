@@ -12,12 +12,14 @@ body {
     align-self: auto;
     margin: 1em;
     padding: 1em;
+    user-select: none;
 }
 
 .app {
     display: flex;
     width: auto;
     background: beige;
+    color: beige;
     box-shadow: 0 0 96px 0 rgba(0, 0, 0, 0.75);
     border-radius: 20px;
     padding: 1em;
@@ -28,18 +30,18 @@ table {
     border-spacing: 0;
     border: cornflowerblue 1px solid;
     margin: 1em;
-    cursor: pointer;
 }
 
 td {
-    background-color: beige;
     border: cornflowerblue 1px solid;
     width: 32px;
     height: 32px;
+    text-align: center;
 }
 
 td.void:hover {
     background-color: lightgray;
+    color: lightgray;
 }
 
 .field {
@@ -47,27 +49,31 @@ td.void:hover {
 }
 
 .void {
-
+    cursor: pointer;
 }
 
 .free {
     background-color: lightcyan;
     cursor: not-allowed;
+    color: lightcyan;
 }
 
 .boom {
     background-color: firebrick;
     cursor: not-allowed;
+    color: firebrick;
 }
 
 .lose {
-    background-color: burlywood;
+    background-color: lightcyan;
     cursor: not-allowed;
+    color: slategray;
 }
 
 .boat {
     background-color: limegreen;
     cursor: not-allowed;
+    color: limegreen;
 }
 
 .copy {
@@ -82,5 +88,4 @@ td.void:hover {
     align-content: center;
     align-items: center;
     width: auto;
-    user-select: none;
 }
