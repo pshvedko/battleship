@@ -72,25 +72,16 @@ type reply struct {
 }
 
 func (a *Application) Begin(w http.ResponseWriter, r *http.Request) {
-	s, ok := r.Context().Value("sid").(uuid.UUID)
-	if !ok {
-		return
-	}
+	s := r.Context().Value("sid").(uuid.UUID)
 	j := json.NewEncoder(w)
 	for _, z := range a.Service.Field(s) {
-		if z.F() > 0 && z.C() < 2 {
-			continue
-		}
 		w.WriteHeader(http.StatusOK)
 		j.Encode(reply{F: z.F(), point: point{X: z.X(), Y: z.Y()}, C: z.C()})
 	}
 }
 
 func (a *Application) Click(w http.ResponseWriter, r *http.Request) {
-	s, ok := r.Context().Value("sid").(uuid.UUID)
-	if !ok {
-		return
-	}
+	s := r.Context().Value("sid").(uuid.UUID)
 	var q point
 	json.NewDecoder(r.Body).Decode(&q)
 	j := json.NewEncoder(w)

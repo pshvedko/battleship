@@ -12,6 +12,9 @@ type game struct {
 func (g *game) initialize(sizes ...int) {
 	g.fields[0].initialize(sizes...)
 	g.fields[1].initialize(sizes...)
+
+	// FIXME
+	g.fields[0] = g.fields[1]
 }
 
 func (g *game) Field() (points []point) {
@@ -20,6 +23,9 @@ func (g *game) Field() (points []point) {
 	for n := range g.fields {
 		for x := range g.fields[n] {
 			for y := range g.fields[n][x] {
+				if n == 1 && g.fields[n][x][y] < 2 {
+					continue
+				}
 				points = append(points, g.fields[n].point(n, x, y))
 			}
 		}
