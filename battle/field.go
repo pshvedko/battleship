@@ -67,18 +67,6 @@ func (f *field) point(n, x, y int) point {
 	return point(x*10*10*10 + y*10*10 + f[x][y]%fieldOpen*10 + n)
 }
 
-func (f *field) answer(n int) (points []point) {
-	// FIXME
-	for {
-		x := rand.Int() % 10
-		y := rand.Int() % 10
-		if f[x][y] < fieldMiss {
-			points, _ = f.shot(n, x, y)
-			return
-		}
-	}
-}
-
 func (f *field) shot(n, x, y int) (points []point, missed bool) {
 	if f.border(x, y) {
 		return

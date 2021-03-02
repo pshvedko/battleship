@@ -1,6 +1,7 @@
 package battle
 
 import (
+	"math/rand"
 	"sync"
 )
 
@@ -35,7 +36,19 @@ func (g *game) Click(x int, y int) []point {
 	defer g.mutex.Unlock()
 	points, missed := g.fields[1].shot(1, x, y)
 	if missed {
-		points = append(points, g.fields[0].answer(0)...)
+		points = append(points, g.answer()...)
 	}
 	return points
+}
+
+func (g *game) answer() (points []point) {
+	// FIXME
+	for {
+		x := rand.Int() % 10
+		y := rand.Int() % 10
+		if g.fields[0][x][y] < fieldMiss {
+			points, _ = g.fields[0].shot(0, x, y)
+			return
+		}
+	}
 }

@@ -1,4 +1,4 @@
-package ws
+package websocket
 
 import (
 	"bytes"
@@ -10,12 +10,16 @@ import (
 )
 
 type WebSocket struct {
-	Updater websocket.Upgrader
-	Handler http.Handler
+	u websocket.Upgrader
+	h http.ServeMux
 }
 
-func (a WebSocket) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	c, err := a.Updater.Upgrade(w, r, nil)
+func New() *WebSocket {
+	return &WebSocket{}
+}
+
+func (s *WebSocket) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	c, err := s.u.Upgrade(w, r, nil)
 	if err != nil {
 		return
 	}
@@ -39,13 +43,13 @@ func (a WebSocket) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			p := bytes.Split(b, []byte{'\n'})
 			var o io.Reader
 			var m []byte
-			var s []byte
+			var u []byte
 			switch len(p) {
 			case 4:
 				o = bytes.NewReader(p[3])
 				fallthrough
 			case 3:
-				s = bytes.TrimSpace(p[2])
+				u = bytes.TrimSpace(p[2])
 				m = bytes.TrimSpace(p[1])
 				switch string(m) {
 				case http.MethodGet, http.MethodPost, http.MethodPatch, http.MethodDelete:
@@ -55,12 +59,12 @@ func (a WebSocket) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			default:
 				return
 			}
-			q, err = http.NewRequestWithContext(r.Context(), string(m), string(s), o)
+			q, err = http.NewRequestWithContext(r.Context(), string(m), string(u), o)
 			if err != nil {
 				return
 			}
 			go func(w *messageWriter, r *http.Request) {
-				a.Handler.ServeHTTP(w, r)
+				s.h.ServeHTTP(w, r)
 				w.End()
 				w.Flush()
 			}(&messageWriter{
@@ -78,14 +82,29 @@ func (a WebSocket) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (a WebSocket) UpgradeMiddleware(h http.Handler) http.Handler {
+func (s *WebSocket) UpgradeMiddleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		connection := r.Header.Get("Connection")
 		upgrade := r.Header.Get("Upgrade")
 		if strings.EqualFold(connection, "Upgrade") && strings.EqualFold(upgrade, "Websocket") {
-			a.ServeHTTP(w, r)
+			s.ServeHTTP(w, r)
 		} else {
 			h.ServeHTTP(w, r)
 		}
+	})
+}
+
+type ResponseWriter interface {
+	http.ResponseWriter
+	http.Flusher
+}
+
+type Request struct {
+	*http.Request
+}
+
+func (s *WebSocket) HandleFunc(path string, f func(w ResponseWriter, r *Request)) {
+	s.h.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+		f(w.(ResponseWriter), &Request{Request: r})
 	})
 }

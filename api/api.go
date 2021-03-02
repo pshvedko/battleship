@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"github.com/google/uuid"
 	"github.com/gorilla/sessions"
+	"github.com/pshvedko/battleship/api/websocket"
 	"github.com/pshvedko/battleship/battle"
 	"log"
 	"math/rand"
@@ -46,20 +47,6 @@ func (a *Application) SessionMiddleware(h http.Handler) http.Handler {
 	})
 }
 
-func (a *Application) PrepareMiddleware(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		sid, ok := r.Context().Value("sid").(uuid.UUID)
-		if ok {
-			err := r.ParseForm()
-			if err != nil {
-				return
-			}
-			r.Form.Add("sid", sid.String())
-		}
-		h.ServeHTTP(w, r)
-	})
-}
-
 type point struct {
 	X int
 	Y int
@@ -71,7 +58,7 @@ type reply struct {
 	C int
 }
 
-func (a *Application) Begin(w http.ResponseWriter, r *http.Request) {
+func (a *Application) Begin(w websocket.ResponseWriter, r *websocket.Request) {
 	s := r.Context().Value("sid").(uuid.UUID)
 	j := json.NewEncoder(w)
 	for _, z := range a.Service.Begin(s) {
@@ -80,7 +67,7 @@ func (a *Application) Begin(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (a *Application) Click(w http.ResponseWriter, r *http.Request) {
+func (a *Application) Click(w websocket.ResponseWriter, r *websocket.Request) {
 	s := r.Context().Value("sid").(uuid.UUID)
 	var q point
 	json.NewDecoder(r.Body).Decode(&q)
@@ -91,7 +78,7 @@ func (a *Application) Click(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (a *Application) Reset(w http.ResponseWriter, r *http.Request) {
+func (a *Application) Reset(w websocket.ResponseWriter, r *websocket.Request) {
 	s := r.Context().Value("sid").(uuid.UUID)
 	a.Service.Reset(s)
 	w.WriteHeader(http.StatusOK)

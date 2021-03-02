@@ -1,17 +1,15 @@
 package main
 
 import (
-	"github.com/pshvedko/battleship/battle"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
-	"github.com/gorilla/websocket"
-
 	"github.com/pshvedko/battleship/api"
-	"github.com/pshvedko/battleship/api/ws"
+	"github.com/pshvedko/battleship/api/websocket"
+	"github.com/pshvedko/battleship/battle"
 )
 
 func main() {
@@ -21,15 +19,10 @@ func main() {
 		Logging: log.New(os.Stderr, "", log.LstdFlags),
 		Session: sessions.NewCookieStore(b),
 	}
-	h := mux.NewRouter()
-	h.HandleFunc("/begin", a.Begin)
-	h.HandleFunc("/click", a.Click)
-	h.HandleFunc("/reset", a.Reset)
-	h.Use(a.PrepareMiddleware)
-	w := ws.WebSocket{
-		Updater: websocket.Upgrader{},
-		Handler: h,
-	}
+	w := websocket.New()
+	w.HandleFunc("/begin", a.Begin)
+	w.HandleFunc("/click", a.Click)
+	w.HandleFunc("/reset", a.Reset)
 	r := mux.NewRouter()
 	f := http.FileServer(api.Dir("html"))
 	r.PathPrefix("/").Handler(http.StripPrefix("/", f)).Methods(http.MethodGet, http.MethodHead)
