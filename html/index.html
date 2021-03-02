@@ -10,26 +10,33 @@
 <div id="win" class="modal">
     <div class="modal-content">
         <div class="modal-box">
-            <p>YOU WIN!</p>
+            <p id="congratulation"></p>
         </div>
-        <a onclick="restart()" class="modal-button">OK</a>
+        <a class="modal-button" onclick="restart()">OK</a>
     </div>
 </div>
 
 <script lang="javascript">
 
     const modal = document.getElementById('win');
+    const label = document.getElementById('congratulation');
 
     function onEnd(e = -1) {
         if (e === -1)
             return
         modal.style.display = 'flex'
-        modal.className += ' modal-win'
+        modal.className += ' '
+        modal.className += e ? 'modal-win' : 'modal-lose'
+        label.innerText = 'You ' + (e ? 'Win' : 'Lose') + '!'
+        query(onReply, seq++, 'GET', '/reset')
     }
 
     function restart() {
         modal.style.display = 'none'
         modal.className = 'modal'
+        label.innerText = ''
+        initField()
+        query(onReply, seq++, 'GET', '/begin')
     }
 
     const field = [];
@@ -38,11 +45,11 @@
     function point(f, i, j) {
         let e = document.getElementById(f + '.' + i + '.' + j)
         if (f === 1) {
-            e.className = 'void'
             e.onclick = function () {
                 onClick(i, j)
             }
         }
+        e.className = 'void'
         e.innerHTML = '&#x25CF;'
         return e
     }

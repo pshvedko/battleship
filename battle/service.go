@@ -8,6 +8,7 @@ import (
 type Battle interface {
 	Field(id uuid.UUID) []point
 	Click(id uuid.UUID, x, y int) []point
+	Reset(id uuid.UUID)
 }
 
 type battle struct {
@@ -36,8 +37,18 @@ func (b *battle) get(id uuid.UUID) *game {
 	return g
 }
 
+func (b *battle) remove(id uuid.UUID) {
+	b.mutex.Lock()
+	defer b.mutex.Unlock()
+	delete(b.games, id)
+}
+
 func (b *battle) Field(id uuid.UUID) []point {
 	return b.get(id).Field()
+}
+
+func (b *battle) Reset(id uuid.UUID) {
+	b.remove(id)
 }
 
 func (b *battle) Click(id uuid.UUID, x, y int) []point {

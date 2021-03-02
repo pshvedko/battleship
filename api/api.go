@@ -90,3 +90,9 @@ func (a *Application) Click(w http.ResponseWriter, r *http.Request) {
 		j.Encode(reply{F: z.F(), point: point{X: z.X(), Y: z.Y()}, C: z.C()})
 	}
 }
+
+func (a *Application) Reset(w http.ResponseWriter, r *http.Request) {
+	s := r.Context().Value("sid").(uuid.UUID)
+	a.Service.Reset(s)
+	w.WriteHeader(http.StatusOK)
+}

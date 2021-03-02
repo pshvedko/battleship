@@ -24,6 +24,7 @@ func main() {
 	h := mux.NewRouter()
 	h.HandleFunc("/begin", a.Begin)
 	h.HandleFunc("/click", a.Click)
+	h.HandleFunc("/reset", a.Reset)
 	h.Use(a.PrepareMiddleware)
 	w := ws.WebSocket{
 		Updater: websocket.Upgrader{},
