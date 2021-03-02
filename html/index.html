@@ -35,10 +35,11 @@
         modal.style.display = 'none'
         modal.className = 'modal'
         label.innerText = ''
-        initField()
+        init()
         query(onReply, seq++, 'GET', '/begin')
     }
 
+    const end = [];
     const field = [];
     const clazz = {0: 'free', 1: 'boat', 2: 'lose', 3: 'boom'}
 
@@ -54,7 +55,7 @@
         return e
     }
 
-    function initField() {
+    function init() {
         for (let f = 0; f < 2; f++) {
             field[f] = []
             for (let i = 0; i < 10; i++) {
@@ -63,10 +64,10 @@
                     field[f][i][j] = point(f, i, j)
                 }
             }
+            end[f] = 20
         }
     }
 
-    let end = [20, 20];
     let seq = 0
     let socket = new WebSocket(location.origin.replace(/^http/, 'ws'))
     let handle = new Map
@@ -84,9 +85,8 @@
                 handle.get(p[0])(JSON.parse(p[3]))
             } catch (e) {
             }
-        if (p[2] !== '#')
-            return
-        handle.delete(p[0])
+        if (p[2] === '#')
+            handle.delete(p[0])
     }
 
     function onClick(x = -1, y = -1) {
@@ -127,7 +127,7 @@
     }
 
     window.onload = function () {
-        initField()
+        init()
     }
 
 </script>

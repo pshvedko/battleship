@@ -33,5 +33,9 @@ func (g *game) Field() (points []point) {
 func (g *game) Click(x int, y int) []point {
 	g.mutex.Lock()
 	defer g.mutex.Unlock()
-	return g.fields[1].shot(1, x, y)
+	points, missed := g.fields[1].shot(1, x, y)
+	if missed {
+		points = append(points, g.fields[0].answer(0)...)
+	}
+	return points
 }

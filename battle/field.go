@@ -60,23 +60,38 @@ func (f *field) empty(x, y int) bool {
 }
 
 func (f *field) zero(x, y int) bool {
-	return fieldFree == f[x][y]
+	return fieldFree == f.get(x, y)
 }
 
 func (f *field) point(n, x, y int) point {
 	return point(x*10*10*10 + y*10*10 + f[x][y]%fieldOpen*10 + n)
 }
 
-func (f *field) shot(n, x, y int) (points []point) {
+func (f *field) answer(n int) (points []point) {
+	// FIXME
+	for {
+		x := rand.Int() % 10
+		y := rand.Int() % 10
+		if f[x][y] < fieldMiss {
+			points, _ = f.shot(n, x, y)
+			return
+		}
+	}
+}
+
+func (f *field) shot(n, x, y int) (points []point, missed bool) {
 	if f.border(x, y) {
 		return
 	} else if f[x][y] < fieldMiss {
 		f.inc(x, y, fieldMiss)
 		if f[x][y] == fieldShot {
 			points = append(points, f.around(n, x, y)...)
+		} else {
+			missed = true
 		}
 	}
-	return append(points, f.point(n, x, y))
+	points = append(points, f.point(n, x, y))
+	return
 }
 
 func (f *field) around(n, x, y int) (points []point) {
