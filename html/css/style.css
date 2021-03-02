@@ -1,0 +1,150 @@
+html {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+body {
+    background: darkgray;
+    align-self: auto;
+    margin: 1em;
+    padding: 1em;
+    user-select: none;
+}
+
+.app {
+    display: flex;
+    width: auto;
+    background: beige;
+    color: beige;
+    box-shadow: 0 0 96px 0 rgba(0, 0, 0, 0.75);
+    border-radius: 20px;
+    padding: 1em;
+    align-items: center;
+}
+
+img {
+    padding: 8px;
+}
+
+img:hover {
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
+table {
+    border-spacing: 0;
+    border: cornflowerblue 1px solid;
+    margin: 1em;
+}
+
+td {
+    border: cornflowerblue 1px solid;
+    width: 32px;
+    height: 32px;
+    text-align: center;
+}
+
+td.void:hover {
+    background-color: lightgray;
+    color: lightgray;
+}
+
+.field {
+    margin: 1em;
+}
+
+.void {
+    cursor: pointer;
+}
+
+.free {
+    background-color: lightcyan;
+    color: lightcyan;
+}
+
+.boom {
+    background-color: firebrick;
+    color: firebrick;
+}
+
+.lose {
+    background-color: lightcyan;
+    color: slategray;
+}
+
+.boat {
+    background-color: limegreen;
+    color: limegreen;
+}
+
+.modal-win {
+    color: limegreen;
+}
+
+.modal-lose {
+    color: red;
+}
+
+.modal {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    padding: 0;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: floralwhite;
+    margin: auto;
+    width: 20%;
+}
+
+.modal-box {
+    font-family: monospace;
+    font-size: 300%;
+    font-weight: bold;
+    text-align: center;
+}
+
+.modal-button {
+    font-family: sans-serif;
+    line-height: 2em;
+    box-sizing: border-box;
+    word-break: break-word;
+    text-decoration: none;
+    cursor: pointer;
+    display: block;
+    padding: .2em 1em;
+    font-size: 1em;
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+    flex: 1;
+    color: whitesmoke;
+    background-color: cornflowerblue;
+}
+
+.copy {
+    padding: 8px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    margin: 1em auto;
+    text-align: center;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    width: auto;
+}
