@@ -14,6 +14,7 @@ func (f shooter) shoot() (int, int, bool) {
 type game struct {
 	mutex  sync.Mutex
 	fields [2]field
+	hit    struct{ x, y int }
 	shooter
 }
 
@@ -63,6 +64,8 @@ func (g *game) answer() (points []point) {
 		if !hit {
 			return
 		}
+		g.hit.x = x
+		g.hit.y = y
 	}
 }
 
