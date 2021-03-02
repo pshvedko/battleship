@@ -84,5 +84,5 @@ func (g *game) randomShot() (x int, y int, ok bool) {
 
 func (g *game) aimedShot() (x int, y int, ok bool) {
 	// TODO
-	return
+	return g.randomShot()
 }
