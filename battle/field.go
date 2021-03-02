@@ -67,15 +67,14 @@ func (f *field) point(n, x, y int) point {
 	return point(x*10*10*10 + y*10*10 + f[x][y]%fieldOpen*10 + n)
 }
 
-func (f *field) shot(n, x, y int) (points []point, missed bool) {
+func (f *field) shot(n, x, y int) (points []point, hit bool) {
 	if f.border(x, y) {
 		return
 	} else if f[x][y] < fieldMiss {
 		f.inc(x, y, fieldMiss)
 		if f[x][y] == fieldShot {
 			points = append(points, f.around(n, x, y)...)
-		} else {
-			missed = true
+			hit = true
 		}
 	}
 	points = append(points, f.point(n, x, y))
@@ -165,4 +164,15 @@ func (f *field) set(x int, y int, i int) {
 
 func (f *field) inc(x int, y int, i int) {
 	f[x][y] += i
+}
+
+func (f *field) clean(n int) (points []point) {
+	for i := range f {
+		for j := range f[i] {
+			if f[i][j] < fieldMiss {
+				points = append(points, f.point(n, i, j))
+			}
+		}
+	}
+	return
 }

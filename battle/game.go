@@ -5,14 +5,22 @@ import (
 	"sync"
 )
 
+type shooter func() (int, int, bool)
+
+func (f shooter) shoot() (int, int, bool) {
+	return f()
+}
+
 type game struct {
 	mutex  sync.Mutex
 	fields [2]field
+	shooter
 }
 
 func (g *game) initialize(sizes ...int) {
 	g.fields[0].initialize(sizes...)
 	g.fields[1].initialize(sizes...)
+	g.shooter = g.randomShot
 }
 
 func (g *game) Field() (points []point) {
@@ -34,21 +42,44 @@ func (g *game) Field() (points []point) {
 func (g *game) Click(x int, y int) []point {
 	g.mutex.Lock()
 	defer g.mutex.Unlock()
-	points, missed := g.fields[1].shot(1, x, y)
-	if missed {
+	points, hit := g.fields[1].shot(1, x, y)
+	if !hit {
 		points = append(points, g.answer()...)
 	}
 	return points
 }
 
 func (g *game) answer() (points []point) {
-	// FIXME
+	defer func() {
+		g.shooter = g.randomShot
+	}()
 	for {
-		x := rand.Int() % 10
-		y := rand.Int() % 10
-		if g.fields[0][x][y] < fieldMiss {
-			points, _ = g.fields[0].shot(0, x, y)
+		x, y, ok := g.shoot()
+		if !ok {
+			return
+		}
+		shots, hit := g.fields[0].shot(0, x, y)
+		points = append(points, shots...)
+		if !hit {
 			return
 		}
 	}
+}
+
+func (g *game) randomShot() (x int, y int, ok bool) {
+	a := g.fields[0].clean(0)
+	if len(a) == 0 {
+		return
+	}
+	p := a[rand.Int()%len(a)]
+	ok = true
+	x = p.X()
+	y = p.Y()
+	g.shooter = g.aimedShot
+	return
+}
+
+func (g *game) aimedShot() (x int, y int, ok bool) {
+	// TODO
+	return
 }
