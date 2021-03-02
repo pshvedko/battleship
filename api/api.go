@@ -4,14 +4,15 @@ import (
 	"context"
 	"encoding/gob"
 	"encoding/json"
-	"github.com/google/uuid"
-	"github.com/gorilla/sessions"
-	"github.com/pshvedko/battleship/api/websocket"
-	"github.com/pshvedko/battleship/battle"
 	"log"
 	"math/rand"
 	"net/http"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/gorilla/sessions"
+	"github.com/pshvedko/battleship/api/websocket"
+	"github.com/pshvedko/battleship/battle"
 )
 
 func init() {
