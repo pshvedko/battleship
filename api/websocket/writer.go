@@ -59,5 +59,7 @@ func (w *messageWriter) Flush() {
 }
 
 func (w *messageWriter) End() {
-	w.end = '#'
+	if w.dirty {
+		w.end = '#'
+	}
 }
