@@ -39,6 +39,12 @@
         query(onReply, seq++, 'GET', '/begin')
     }
 
+    function reload() {
+        query(onReply, seq++, 'GET', '/reset')
+        init()
+        query(onReply, seq++, 'GET', '/begin')
+    }
+
     const end = [];
     const field = [];
     const clazz = {0: 'free', 1: 'boat', 2: 'lose', 3: 'boom'}
@@ -257,6 +263,7 @@
             </tr>
         </table>
     </div>
+    <div><img src="images/reset.png" width="48" onclick="reload()"/></div>
     <div class="field">
         <table>
             <tr>
