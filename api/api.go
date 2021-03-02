@@ -74,7 +74,7 @@ type reply struct {
 func (a *Application) Begin(w http.ResponseWriter, r *http.Request) {
 	s := r.Context().Value("sid").(uuid.UUID)
 	j := json.NewEncoder(w)
-	for _, z := range a.Service.Field(s) {
+	for _, z := range a.Service.Begin(s) {
 		w.WriteHeader(http.StatusOK)
 		j.Encode(reply{F: z.F(), point: point{X: z.X(), Y: z.Y()}, C: z.C()})
 	}

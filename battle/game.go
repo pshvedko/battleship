@@ -12,9 +12,6 @@ type game struct {
 func (g *game) initialize(sizes ...int) {
 	g.fields[0].initialize(sizes...)
 	g.fields[1].initialize(sizes...)
-
-	// FIXME
-	g.fields[0] = g.fields[1]
 }
 
 func (g *game) Field() (points []point) {

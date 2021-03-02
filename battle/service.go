@@ -6,7 +6,7 @@ import (
 )
 
 type Battle interface {
-	Field(id uuid.UUID) []point
+	Begin(id uuid.UUID) []point
 	Click(id uuid.UUID, x, y int) []point
 	Reset(id uuid.UUID)
 }
@@ -43,7 +43,7 @@ func (b *battle) remove(id uuid.UUID) {
 	delete(b.games, id)
 }
 
-func (b *battle) Field(id uuid.UUID) []point {
+func (b *battle) Begin(id uuid.UUID) []point {
 	return b.get(id).Field()
 }
 
