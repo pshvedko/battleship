@@ -72,6 +72,55 @@ td.void:hover {
     color: limegreen;
 }
 
+.modal-win {
+    color: limegreen;
+}
+
+.modal {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    padding: 0;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: floralwhite;
+    margin: auto;
+    width: auto;
+}
+
+.modal-box {
+    font-size: 300%;
+    font-weight: bold;
+    text-align: center;
+    padding-left: 1.5em;
+    padding-right: 1.5em;
+}
+
+.modal-button {
+    word-break: break-word;
+    font-family: Helvetica, Calibri, Arial, sans-serif;
+    line-height: 2em;
+    box-sizing: border-box;
+    text-decoration: none;
+    cursor: pointer;
+    display: block;
+    padding: .2em 1em;
+    font-size: 1em;
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+    flex: 1;
+    color: whitesmoke;
+    background-color: cornflowerblue;
+}
+
 .copy {
     padding: 8px;
     position: absolute;

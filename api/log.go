@@ -30,6 +30,14 @@ func (w *loggingWriter) WriteHeader(code int) {
 	return
 }
 
+func (w *loggingWriter) Flush() {
+	h, ok := w.ResponseWriter.(http.Flusher)
+	if !ok {
+		return
+	}
+	h.Flush()
+}
+
 func (w *loggingWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 	h, ok := w.ResponseWriter.(http.Hijacker)
 	if !ok {
