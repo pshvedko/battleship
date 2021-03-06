@@ -64,15 +64,16 @@ func (f *field) zero(x, y int) bool {
 }
 
 func (f *field) point(n, x, y int) point {
-	return point(x*10*10*10 + y*10*10 + f[x][y]%fieldOpen*10 + n)
+	return point(x*10*10*10 + y*10*10 + f.get(x, y)*10 + n)
 }
 
 func (f *field) shot(n, x, y int) (points []point, hit bool) {
 	if f.border(x, y) {
 		return
-	} else if f[x][y] < fieldMiss {
+	}
+	if f.raw(x, y) < fieldMiss {
 		f.inc(x, y, fieldMiss)
-		if f[x][y] == fieldShot {
+		if f.raw(x, y) == fieldShot {
 			points = append(points, f.around(n, x, y)...)
 			hit = true
 		}
@@ -141,13 +142,13 @@ func (f *field) get(x int, y int) int {
 	if f.border(x, y) {
 		return 0
 	}
-	return f[x][y] % fieldOpen
+	return f.raw(x, y) % fieldOpen
 }
 
 func (f *field) update(a, b, n, x, y int) (points []point) {
 	if f.border(x, y) {
 		return
-	} else if f[x][y] != a {
+	} else if f.raw(x, y) != a {
 		return
 	}
 	f.set(x, y, b)
@@ -158,21 +159,33 @@ func (f *field) border(x int, y int) bool {
 	return x < 0 || x >= len(f) || y < 0 || y >= len(f)
 }
 
+func (f *field) raw(x int, y int) int {
+	return f[y][x]
+}
+
 func (f *field) set(x int, y int, i int) {
-	f[x][y] = i
+	f[y][x] = i
 }
 
 func (f *field) inc(x int, y int, i int) {
-	f[x][y] += i
+	f[y][x] += i
 }
 
-func (f *field) clean(n int) (points []point) {
+func (f *field) target(x int, y int) bool {
+	return !f.border(x, y) && f.raw(x, y) < fieldMiss
+}
+
+func (f *field) random(n int) point {
+	var a []point
 	for i := range f {
-		for j := range f[i] {
-			if f[i][j] < fieldMiss {
-				points = append(points, f.point(n, i, j))
+		for j := range &f[i] {
+			if f.raw(j, i) < fieldMiss {
+				a = append(a, f.point(n, j, i))
 			}
 		}
 	}
-	return
+	if len(a) > 0 {
+		return a[rand.Int()%len(a)]
+	}
+	return -1
 }
