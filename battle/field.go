@@ -167,7 +167,7 @@ func (f *field) set(x int, y int, i int) {
 }
 
 func (f *field) inc(x int, y int, i int) (ok bool) {
-	if ok = f.raw(x, y) < fieldMiss; ok {
+	if ok = f.raw(x, y) < i; ok {
 		f[y][x] += i
 	}
 	return
