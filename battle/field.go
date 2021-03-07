@@ -71,8 +71,7 @@ func (f *field) shot(n, x, y int) (points []point, hit bool) {
 	if f.border(x, y) {
 		return
 	}
-	if f.raw(x, y) < fieldMiss {
-		f.inc(x, y, fieldMiss)
+	if f.inc(x, y, fieldMiss) {
 		if f.raw(x, y) == fieldShot {
 			points = append(points, f.around(n, x, y)...)
 			hit = true
@@ -167,8 +166,11 @@ func (f *field) set(x int, y int, i int) {
 	f[y][x] = i
 }
 
-func (f *field) inc(x int, y int, i int) {
-	f[y][x] += i
+func (f *field) inc(x int, y int, i int) (ok bool) {
+	if ok = f.raw(x, y) < fieldMiss; ok {
+		f[y][x] += i
+	}
+	return
 }
 
 func (f *field) target(x int, y int) bool {
