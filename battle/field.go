@@ -60,11 +60,11 @@ func (f *field) empty(x, y int) bool {
 }
 
 func (f *field) zero(x, y int) bool {
-	return fieldFree == f.get(x, y)
+	return f.get(x, y) == fieldFree
 }
 
 func (f *field) point(n, x, y int) point {
-	return point(x*10*10*10 + y*10*10 + f.get(x, y)*10 + n)
+	return point(x*10*10*10 + y*10*10 + f.raw(x, y)*10 + n)
 }
 
 func (f *field) shot(n, x, y int) (points []point, hit bool) {
@@ -142,7 +142,7 @@ func (f *field) get(x int, y int) int {
 	if f.border(x, y) {
 		return 0
 	}
-	return f.raw(x, y) % fieldOpen
+	return f.raw(x, y)
 }
 
 func (f *field) update(a, b, n, x, y int) (points []point) {
