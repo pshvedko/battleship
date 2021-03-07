@@ -63,7 +63,8 @@ td.void:hover {
     cursor: pointer;
 }
 
-.free {
+.free,
+.open {
     background-color: lightcyan;
     color: lightcyan;
 }
@@ -81,6 +82,10 @@ td.void:hover {
 .boat {
     background-color: limegreen;
     color: limegreen;
+}
+
+.new {
+    color: black;
 }
 
 .modal-win {

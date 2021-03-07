@@ -48,7 +48,8 @@
 
     const end = [];
     const field = [];
-    const clazz = {0: 'free', 1: 'boat', 2: 'lose', 3: 'boom'}
+    const clazz = {0: 'free', 1: 'boat', 2: 'lose', 3: 'boom', 4: 'open'}
+    const click = []
 
     function point(f, x, y) {
         let e = document.getElementById(f + '.' + y + '.' + x)
@@ -93,7 +94,14 @@
     }
 
     function onClick(x = -1, y = -1) {
-        query(onReply, seq++, 'GET', '/click', {X: x, Y: y})
+        for (const i of click) {
+            i.className = i.className.toString().split(' ')[0]
+        }
+        query(onNewReply, seq++, 'GET', '/click', {X: x, Y: y})
+    }
+
+    function onNewReply(e) {
+        onReply(e, 'new')
     }
 
     function onReply(e = {
@@ -101,10 +109,15 @@
         X: -1,
         Y: -1,
         C: -1,
-    }) {
+    }, mod = '') {
         if (e.F === -1)
             return
-        field[e.F][e.Y][e.X].className = clazz[e.C]
+        let style = [clazz[e.C]]
+        if (e.C === 2 || e.C === 3) {
+            style.push(mod)
+            click.push(field[e.F][e.Y][e.X])
+        }
+        field[e.F][e.Y][e.X].className = style.join(' ')
         field[e.F][e.Y][e.X].onclick = undefined
         if (e.C === 3) {
             end[e.F]--
