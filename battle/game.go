@@ -1,19 +1,20 @@
 package battle
 
 import (
-	"math/rand"
+	"log"
 	"sync"
 )
 
 type shooter func() (int, int, bool)
 
-func (f shooter) shoot() (int, int, bool) {
-	return f()
+func (s shooter) shot() (int, int, bool) {
+	return s()
 }
 
 type game struct {
 	mutex  sync.Mutex
 	fields [2]field
+	hits   []point
 	shooter
 }
 
@@ -26,10 +27,10 @@ func (g *game) initialize(sizes ...int) {
 func (g *game) Field() (points []point) {
 	g.mutex.Lock()
 	defer g.mutex.Unlock()
-	for n := range g.fields {
-		for x := range g.fields[n] {
-			for y := range g.fields[n][x] {
-				if n == 1 && g.fields[n][x][y] < 2 {
+	for n := range &g.fields {
+		for y := range &g.fields[n] {
+			for x := range &g.fields[n][y] {
+				if n == 1 && g.fields[n].raw(x, y) < 2 {
 					continue
 				}
 				points = append(points, g.fields[n].point(n, x, y))
@@ -37,6 +38,18 @@ func (g *game) Field() (points []point) {
 		}
 	}
 	return
+}
+
+func (g *game) xy() (int, int) {
+	return g.hits[len(g.hits)-1].XY()
+}
+
+func (g *game) hit(n int) {
+	g.hits = g.hits[:n]
+}
+
+func (g *game) add(shots ...point) {
+	g.hits = append(g.hits, shots[len(shots)-1])
 }
 
 func (g *game) Click(x int, y int) []point {
@@ -50,36 +63,77 @@ func (g *game) Click(x int, y int) []point {
 }
 
 func (g *game) answer() (points []point) {
-	defer func() {
-		g.shooter = g.randomShot
-	}()
 	for {
-		x, y, ok := g.shoot()
+		x, y, ok := g.shot()
 		if !ok {
-			return
+			break
 		}
 		shots, hit := g.fields[0].shot(0, x, y)
 		points = append(points, shots...)
 		if !hit {
-			return
+			break
 		}
+		g.add(shots...)
 	}
-}
-
-func (g *game) randomShot() (x int, y int, ok bool) {
-	a := g.fields[0].clean(0)
-	if len(a) == 0 {
-		return
+	if len(g.hits) == 0 {
+		g.shooter = g.randomShot
 	}
-	p := a[rand.Int()%len(a)]
-	ok = true
-	x = p.X()
-	y = p.Y()
-	g.shooter = g.aimedShot
 	return
 }
 
-func (g *game) aimedShot() (x int, y int, ok bool) {
-	// TODO
+func (g *game) randomShot() (x int, y int, ok bool) {
+	p := g.fields[0].random(0)
+
+	log.Print(p.X(), p.Y(), p.ok())
+
+	if !p.ok() {
+		return
+	}
+	g.hit(0)
+	g.shooter = g.rightShot
+	return p.X(), p.Y(), p.ok()
+}
+
+func (g *game) rightShot() (x int, y int, ok bool) {
+	x, y = g.xy()
+	x++
+	if ok = g.fields[0].target(x, y); ok {
+		return
+	}
+	g.hit(1)
+	g.shooter = g.leftShot
+	return g.leftShot()
+}
+
+func (g *game) leftShot() (x int, y int, ok bool) {
+	x, y = g.xy()
+	x--
+	if ok = g.fields[0].target(x, y); ok {
+		return
+	}
+	g.hit(1)
+	g.shooter = g.downShot
+	return g.downShot()
+}
+
+func (g *game) downShot() (x int, y int, ok bool) {
+	x, y = g.xy()
+	y++
+	if ok = g.fields[0].target(x, y); ok {
+		return
+	}
+	g.hit(1)
+	g.shooter = g.upShot
+	return g.upShot()
+}
+
+func (g *game) upShot() (x int, y int, ok bool) {
+	x, y = g.xy()
+	y--
+	if ok = g.fields[0].target(x, y); ok {
+		return
+	}
+	g.hit(1)
+	g.shooter = g.randomShot
 	return g.randomShot()
 }

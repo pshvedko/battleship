@@ -17,3 +17,11 @@ func (p point) C() int {
 func (p point) F() int {
 	return int(p) % 10
 }
+
+func (p point) XY() (int, int) {
+	return p.X(), p.Y()
+}
+
+func (p point) ok() bool {
+	return p >= 0
+}

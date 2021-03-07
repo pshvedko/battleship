@@ -12,7 +12,7 @@
         <div class="modal-box">
             <p id="congratulation"></p>
         </div>
-        <a class="modal-button" onclick="restart()">OK</a>
+        <a class="modal-button" onclick="reset()">OK</a>
     </div>
 </div>
 
@@ -28,10 +28,9 @@
         modal.className += ' '
         modal.className += e ? 'modal-win' : 'modal-lose'
         label.innerText = 'You ' + (e ? 'Win' : 'Lose') + '!'
-        query(onReply, seq++, 'GET', '/reset')
     }
 
-    function restart() {
+    function start() {
         modal.style.display = 'none'
         modal.className = 'modal'
         label.innerText = ''
@@ -39,21 +38,23 @@
         query(onReply, seq++, 'GET', '/begin')
     }
 
-    function reload() {
-        query(onReply, seq++, 'GET', '/reset')
-        init()
-        query(onReply, seq++, 'GET', '/begin')
+    function onReset() {
+        start()
+    }
+
+    function reset() {
+        query(onReset, seq++, 'GET', '/reset')
     }
 
     const end = [];
     const field = [];
     const clazz = {0: 'free', 1: 'boat', 2: 'lose', 3: 'boom'}
 
-    function point(f, i, j) {
-        let e = document.getElementById(f + '.' + i + '.' + j)
+    function point(f, x, y) {
+        let e = document.getElementById(f + '.' + y + '.' + x)
         if (f === 1) {
             e.onclick = function () {
-                onClick(i, j)
+                onClick(x, y)
             }
         }
         e.className = 'void'
@@ -64,19 +65,15 @@
     function init() {
         for (let f = 0; f < 2; f++) {
             field[f] = []
-            for (let i = 0; i < 10; i++) {
-                field[f][i] = []
-                for (let j = 0; j < 10; j++) {
-                    field[f][i][j] = point(f, i, j)
+            for (let y = 0; y < 10; y++) {
+                field[f][y] = []
+                for (let x = 0; x < 10; x++) {
+                    field[f][y][x] = point(f, x, y)
                 }
             }
             end[f] = 20
         }
     }
-
-    let seq = 0
-    let socket = new WebSocket(location.origin.replace(/^http/, 'ws'))
-    let handle = new Map
 
     function query(done, id, method = 'GET', path = '/', body = '') {
         socket.send([id.toString(), method, path, JSON.stringify(body)].join('\r\n'))
@@ -88,7 +85,7 @@
             return
         if (p[1] === '200')
             try {
-                handle.get(p[0])(JSON.parse(p[3]))
+                handle.get(p[0])(JSON.parse(p[3] ? p[3] : '{}'))
             } catch (e) {
             }
         if (p[2] === '#')
@@ -107,33 +104,36 @@
     }) {
         if (e.F === -1)
             return
-        field[e.F][e.X][e.Y].className = clazz[e.C]
-        field[e.F][e.X][e.Y].onclick = undefined
+        field[e.F][e.Y][e.X].className = clazz[e.C]
+        field[e.F][e.Y][e.X].onclick = undefined
         if (e.C === 3) {
             end[e.F]--
-            if (!end[0] || !end[1])
-                onEnd(e.F)
+            if (!end[0])
+                onEnd(0)
+            if (!end[1])
+                onEnd(1)
         }
     }
 
-    socket.onopen = function () {
-        query(onReply, seq++, 'GET', '/begin')
-    }
-
-    socket.onmessage = function (e) {
-        reply(e.data.toString().split(/\r?\n/))
-    }
-
-    socket.onclose = function () {
-        handle.clear()
-    }
-
-    socket.onerror = function () {
-        handle.clear()
-    }
+    let seq = 0
+    let handle
+    let socket
 
     window.onload = function () {
-        init()
+        handle = new Map
+        socket = new WebSocket(location.origin.replace(/^http/, 'ws'))
+        socket.onopen = function () {
+            start()
+        }
+        socket.onmessage = function (e) {
+            reply(e.data.toString().split(/\r?\n/))
+        }
+        socket.onclose = function () {
+            handle.clear()
+        }
+        socket.onerror = function () {
+            handle.clear()
+        }
     }
 
 </script>
@@ -263,7 +263,7 @@
             </tr>
         </table>
     </div>
-    <div><img src="images/reset.png" width="48" onclick="reload()"/></div>
+    <div><img src="images/reset.png" width="48" onclick="reset()" alt="RESET"/></div>
     <div class="field">
         <table>
             <tr>
