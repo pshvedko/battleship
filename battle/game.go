@@ -1,7 +1,6 @@
 package battle
 
 import (
-	"log"
 	"sync"
 )
 
@@ -21,7 +20,24 @@ type game struct {
 func (g *game) initialize(sizes ...int) {
 	g.fields[0].initialize(sizes...)
 	g.fields[1].initialize(sizes...)
-	g.shooter = g.randomShot
+	g.shooter = g.rightShot
+}
+
+func (g *game) next(x, y, n int, s shooter) (int, int, bool) {
+	if g.fields[0].target(x, y) {
+		return x, y, true
+	}
+	g.hits = g.hits[:n]
+	g.shooter = s
+	return g.shot()
+}
+
+func (g *game) add(shots ...point) {
+	g.hits = append(g.hits, shots[len(shots)-1])
+}
+
+func (g *game) xy() (int, int) {
+	return g.hits[len(g.hits)-1].XY()
 }
 
 func (g *game) Field() (points []point) {
@@ -38,18 +54,6 @@ func (g *game) Field() (points []point) {
 		}
 	}
 	return
-}
-
-func (g *game) xy() (int, int) {
-	return g.hits[len(g.hits)-1].XY()
-}
-
-func (g *game) hit(n int) {
-	g.hits = g.hits[:n]
-}
-
-func (g *game) add(shots ...point) {
-	g.hits = append(g.hits, shots[len(shots)-1])
 }
 
 func (g *game) Click(x int, y int) []point {
@@ -75,65 +79,33 @@ func (g *game) answer() (points []point) {
 		}
 		g.add(shots...)
 	}
-	if len(g.hits) == 0 {
-		g.shooter = g.randomShot
-	}
 	return
 }
 
-func (g *game) randomShot() (x int, y int, ok bool) {
-	p := g.fields[0].random(0)
-
-	log.Print(p.X(), p.Y(), p.ok())
-
-	if !p.ok() {
-		return
+func (g *game) rightShot() (int, int, bool) {
+	if len(g.hits) == 0 {
+		p := g.fields[0].random(0)
+		return p.X(), p.Y(), p.ok()
 	}
-	g.hit(0)
-	g.shooter = g.rightShot
-	return p.X(), p.Y(), p.ok()
-}
-
-func (g *game) rightShot() (x int, y int, ok bool) {
-	x, y = g.xy()
+	x, y := g.xy()
 	x++
-	if ok = g.fields[0].target(x, y); ok {
-		return
-	}
-	g.hit(1)
-	g.shooter = g.leftShot
-	return g.leftShot()
+	return g.next(x, y, 1, g.leftShot)
 }
 
-func (g *game) leftShot() (x int, y int, ok bool) {
-	x, y = g.xy()
+func (g *game) leftShot() (int, int, bool) {
+	x, y := g.xy()
 	x--
-	if ok = g.fields[0].target(x, y); ok {
-		return
-	}
-	g.hit(1)
-	g.shooter = g.downShot
-	return g.downShot()
+	return g.next(x, y, 1, g.downShot)
 }
 
-func (g *game) downShot() (x int, y int, ok bool) {
-	x, y = g.xy()
+func (g *game) downShot() (int, int, bool) {
+	x, y := g.xy()
 	y++
-	if ok = g.fields[0].target(x, y); ok {
-		return
-	}
-	g.hit(1)
-	g.shooter = g.upShot
-	return g.upShot()
+	return g.next(x, y, 1, g.upShot)
 }
 
-func (g *game) upShot() (x int, y int, ok bool) {
-	x, y = g.xy()
+func (g *game) upShot() (int, int, bool) {
+	x, y := g.xy()
 	y--
-	if ok = g.fields[0].target(x, y); ok {
-		return
-	}
-	g.hit(1)
-	g.shooter = g.randomShot
-	return g.randomShot()
+	return g.next(x, y, 0, g.rightShot)
 }
