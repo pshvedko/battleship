@@ -20,24 +20,7 @@ type game struct {
 func (g *game) initialize(sizes ...int) {
 	g.fields[0].initialize(sizes...)
 	g.fields[1].initialize(sizes...)
-	g.shooter = g.rightShot
-}
-
-func (g *game) next(x, y, n int, s shooter) (int, int, bool) {
-	if g.fields[0].target(x, y) {
-		return x, y, true
-	}
-	g.hits = g.hits[:n]
-	g.shooter = s
-	return g.shot()
-}
-
-func (g *game) add(shots ...point) {
-	g.hits = append(g.hits, shots[len(shots)-1])
-}
-
-func (g *game) xy() (int, int) {
-	return g.hits[len(g.hits)-1].XY()
+	g.shooter = g.random
 }
 
 func (g *game) Field() (points []point) {
@@ -82,30 +65,57 @@ func (g *game) answer() (points []point) {
 	return
 }
 
-func (g *game) rightShot() (int, int, bool) {
-	if len(g.hits) == 0 {
-		p := g.fields[0].random(0)
-		return p.X(), p.Y(), p.ok()
+func (g *game) random() (x int, y int, ok bool) {
+	x, y, ok = g.fields[0].random(0).XYZ()
+	if ok {
+		g.shooter = g.right
 	}
+	g.hits = g.hits[:0]
+	return
+}
+
+func (g *game) right() (int, int, bool) {
 	x, y := g.xy()
 	x++
-	return g.next(x, y, 1, g.leftShot)
+	return g.next(x, y, g.left)
 }
 
-func (g *game) leftShot() (int, int, bool) {
+func (g *game) left() (int, int, bool) {
 	x, y := g.xy()
 	x--
-	return g.next(x, y, 1, g.downShot)
+	return g.next(x, y, g.down)
 }
 
-func (g *game) downShot() (int, int, bool) {
+func (g *game) down() (int, int, bool) {
 	x, y := g.xy()
 	y++
-	return g.next(x, y, 1, g.upShot)
+	return g.next(x, y, g.up)
 }
 
-func (g *game) upShot() (int, int, bool) {
+func (g *game) up() (int, int, bool) {
 	x, y := g.xy()
 	y--
-	return g.next(x, y, 0, g.rightShot)
+	return g.next(x, y, g.random)
+}
+
+func (g *game) next(x, y int, s shooter) (int, int, bool) {
+	if g.fields[0].target(x, y) {
+		return x, y, true
+	}
+	if len(g.hits) > 0 {
+		g.hits = g.hits[:1]
+	}
+	g.shooter = s
+	return g.shot()
+}
+
+func (g *game) add(shots ...point) {
+	g.hits = append(g.hits, shots[len(shots)-1])
+}
+
+func (g *game) xy() (int, int) {
+	if len(g.hits) == 0 {
+		return -1, -1
+	}
+	return g.hits[len(g.hits)-1].XY()
 }
