@@ -5,7 +5,7 @@
 table {
     border-spacing: 0;
     border: cornflowerblue 1px solid;
-    margin: 1em;
+/*    margin: 1em; */
 }
 
 td {
@@ -21,7 +21,7 @@ td.void:hover {
 }
 
 .field {
-    margin: 1em;
+  /*  margin: 1em; */
 }
 
 .void {
