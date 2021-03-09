@@ -22,6 +22,9 @@ func (p point) XY() (int, int) {
 	return p.X(), p.Y()
 }
 
-func (p point) ok() bool {
-	return p >= 0
+func (p point) XYZ() (int, int, bool) {
+	if p < 0 {
+		return 0, 0, false
+	}
+	return p.X(), p.Y(), true
 }

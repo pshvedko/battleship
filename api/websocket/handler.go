@@ -103,8 +103,12 @@ type Request struct {
 	*http.Request
 }
 
+type HandlerFunc func(w ResponseWriter, r *Request)
+
+func (f HandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	f(w.(ResponseWriter), &Request{Request: r})
+}
+
 func (s *WebSocket) HandleFunc(path string, f func(w ResponseWriter, r *Request)) {
-	s.h.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
-		f(w.(ResponseWriter), &Request{Request: r})
-	})
+	s.h.Handle(path, HandlerFunc(f))
 }
