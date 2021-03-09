@@ -1,8 +1,7 @@
 <svg fill="none"  xmlns="http://www.w3.org/2000/svg">
 	<foreignObject width="100%" height="100%">
-    		<div class="field">
-			<style>
-				table {
+<style>
+table {
     border-spacing: 0;
     border: cornflowerblue 1px solid;
     margin: 1em;
@@ -52,8 +51,8 @@ td.void:hover {
 .new {
     color: black;
 }
-
-			</style>
+</style>
+    <div class="field">
         <table>
             <tbody><tr>
                 <td id="0.0.0" class="lose new">●</td>
