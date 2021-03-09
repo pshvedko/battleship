@@ -1,6 +1,59 @@
 <svg fill="none"  xmlns="http://www.w3.org/2000/svg">
 	<foreignObject width="100%" height="100%">
     		<div class="field">
+			<style>
+				table {
+    border-spacing: 0;
+    border: cornflowerblue 1px solid;
+    margin: 1em;
+}
+
+td {
+    border: cornflowerblue 1px solid;
+    width: 32px;
+    height: 32px;
+    text-align: center;
+}
+
+td.void:hover {
+    background-color: lightgray;
+    color: lightgray;
+}
+
+.field {
+    margin: 1em;
+}
+
+.void {
+    cursor: pointer;
+}
+
+.free,
+.open {
+    background-color: lightcyan;
+    color: lightcyan;
+}
+
+.boom {
+    background-color: firebrick;
+    color: firebrick;
+}
+
+.lose {
+    background-color: lightcyan;
+    color: slategray;
+}
+
+.boat {
+    background-color: limegreen;
+    color: limegreen;
+}
+
+.new {
+    color: black;
+}
+
+			</style>
         <table>
             <tbody><tr>
                 <td id="0.0.0" class="lose new">●</td>
