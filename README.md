@@ -4,4 +4,4 @@
 
 #
 
-![](http://nxdomain.ru/favicon.ico)
+<img src=http://nxdomain.ru/favicon.ico />
