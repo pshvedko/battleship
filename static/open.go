@@ -18,20 +18,20 @@ type stat struct {
 	n string
 }
 
-func (f *stat) Name() string { return f.n }
+func (s *stat) Name() string { return s.n }
 
-func (f *stat) Mode() os.FileMode { return 0444 }
+func (s *stat) ModTime() time.Time { return s.t }
 
-func (f *stat) ModTime() time.Time { return f.t }
+func (s *stat) Sys() interface{} { return nil }
 
-func (f *stat) Sys() interface{} { return nil }
-
-func (f *stat) Close() error { return nil }
+func (s *stat) Close() error { return nil }
 
 type file struct {
 	stat
 	r bytes.Reader
 }
+
+func (f *file) Mode() os.FileMode { return 0444 }
 
 func (f *file) Size() int64 { return f.r.Size() }
 
@@ -51,6 +51,8 @@ type dir struct {
 	stat
 	f map[string]http.File
 }
+
+func (d *dir) Mode() os.FileMode { return 0555 }
 
 func (d *dir) Read([]byte) (n int, err error) { panic("implement me") }
 
