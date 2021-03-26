@@ -1,5 +1,7 @@
 package main
 
+//go:generate embeddedgen -source html static
+
 import (
 	"log"
 	"net/http"
