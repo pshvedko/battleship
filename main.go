@@ -10,6 +10,7 @@ import (
 	"github.com/pshvedko/battleship/api"
 	"github.com/pshvedko/battleship/api/websocket"
 	"github.com/pshvedko/battleship/battle"
+	"github.com/pshvedko/battleship/static"
 )
 
 func main() {
@@ -24,7 +25,7 @@ func main() {
 	w.HandleFunc("/click", a.Click)
 	w.HandleFunc("/reset", a.Reset)
 	r := mux.NewRouter()
-	f := http.FileServer(api.Dir("html"))
+	f := http.FileServer(static.Dir())
 	r.PathPrefix("/").Handler(http.StripPrefix("/", f)).Methods(http.MethodGet, http.MethodHead)
 	r.Use(a.LoggingMiddleware)
 	r.Use(a.SessionMiddleware)
