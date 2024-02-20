@@ -1,8 +1,8 @@
 package main
 
-//go:generate embeddedgen -source html static
-
 import (
+	"embed"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -12,8 +12,10 @@ import (
 	"github.com/pshvedko/battleship/api"
 	"github.com/pshvedko/battleship/api/websocket"
 	"github.com/pshvedko/battleship/battle"
-	"github.com/pshvedko/battleship/static"
 )
+
+//go:embed html
+var h embed.FS
 
 func main() {
 	b := []byte("TODO_SUPER_SECRET_KEY_1234567890")
@@ -27,12 +29,16 @@ func main() {
 	w.HandleFunc("/click", a.Click)
 	w.HandleFunc("/reset", a.Reset)
 	r := mux.NewRouter()
-	f := http.FileServer(static.Dir())
-	r.PathPrefix("/").Handler(http.StripPrefix("/", f)).Methods(http.MethodGet, http.MethodHead)
+	d, err := fs.Sub(h, "html")
+	if err != nil {
+		log.Fatal(err)
+	}
+	f := http.FileServer(http.FS(d))
+	r.PathPrefix("/").Handler(f).Methods(http.MethodGet, http.MethodHead)
 	r.Use(a.LoggingMiddleware)
 	r.Use(a.SessionMiddleware)
 	r.Use(w.UpgradeMiddleware)
-	err := http.ListenAndServe(":8080", r)
+	err = http.ListenAndServe(":8080", r)
 	if err != nil {
 		log.Fatal(err)
 	}
