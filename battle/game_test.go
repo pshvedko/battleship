@@ -15,8 +15,8 @@ func benchmark(b *testing.B, a int) {
 			c++
 		}
 	}
-	b.ReportMetric(float64(n)/float64(b.N), "shots")
-	b.ReportMetric(float64(c)/float64(b.N), "moves")
+	b.ReportMetric(float64(n)/float64(b.N), "shots/op")
+	b.ReportMetric(float64(c)/float64(b.N), "moves/op")
 }
 
 func BenchmarkGame(b *testing.B) {
