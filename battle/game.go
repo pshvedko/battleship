@@ -21,7 +21,7 @@ type game struct {
 	shooter
 }
 
-func (g *game) initialize(aim int, sizes ...int) {
+func (g *game) initialize(hard int, sizes ...int) {
 	g.fields[0].initialize(sizes...)
 	g.fields[1].initialize(sizes...)
 	g.shooter = g.random
@@ -30,7 +30,7 @@ func (g *game) initialize(aim int, sizes ...int) {
 		g.ship[size]++
 		g.deck++
 	}
-	g.hard = aim
+	g.hard = hard
 }
 
 func (g *game) Field() (points []point) {
