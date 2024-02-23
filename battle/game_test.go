@@ -1,14 +1,15 @@
 package battle
 
 import (
+	"strconv"
 	"testing"
 )
 
-func benchmark(b *testing.B, v int) {
+func benchmark(b *testing.B, a int) {
 	var n, c int
 	for i := 0; i < b.N; i++ {
 		var g game
-		g.initialize(v, 4, 3, 3, 2, 2, 2)
+		g.initialize(a, 4, 3, 3, 2, 2, 2)
 		for g.alive() {
 			p := g.answer()
 			n += len(p)
@@ -20,10 +21,9 @@ func benchmark(b *testing.B, v int) {
 }
 
 func BenchmarkGame(b *testing.B) {
-	b.Run("0", func(b *testing.B) {
-		benchmark(b, 0)
-	})
-	b.Run("1", func(b *testing.B) {
-		benchmark(b, 1)
-	})
+	for a := 0; a < 2; a++ {
+		b.Run(strconv.Itoa(a), func(b *testing.B) {
+			benchmark(b, a)
+		})
+	}
 }
