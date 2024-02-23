@@ -1,7 +1,6 @@
 package battle
 
 import (
-	"strconv"
 	"testing"
 )
 
@@ -21,9 +20,9 @@ func benchmark(b *testing.B, a int) {
 }
 
 func BenchmarkGame(b *testing.B) {
-	for a := 0; a < 2; a++ {
-		b.Run(strconv.Itoa(a), func(b *testing.B) {
-			benchmark(b, a)
+	for i, n := range []string{"Random", "Weight"} {
+		b.Run(n, func(b *testing.B) {
+			benchmark(b, i)
 		})
 	}
 }
