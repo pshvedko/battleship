@@ -16,13 +16,15 @@ type battle struct {
 	mutex sync.Mutex
 	games map[uuid.UUID]*game
 	sizes []int
+	level int
 }
 
-func NewBattle(sizes ...int) *battle {
+func New(level int, sizes ...int) Battle {
 	return &battle{
 		mutex: sync.Mutex{},
 		games: map[uuid.UUID]*game{},
 		sizes: sizes,
+		level: level,
 	}
 }
 
@@ -32,7 +34,7 @@ func (b *battle) get(id uuid.UUID) *game {
 	g, ok := b.games[id]
 	if !ok {
 		g = &game{}
-		g.initialize(b.sizes...)
+		g.initialize(b.level, b.sizes...)
 		b.games[id] = g
 	}
 	return g

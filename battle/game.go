@@ -17,10 +17,11 @@ type game struct {
 	kill   int
 	ship   map[int]int
 	deck   int
+	aim    int
 	shooter
 }
 
-func (g *game) initialize(sizes ...int) {
+func (g *game) initialize(aim int, sizes ...int) {
 	g.fields[0].initialize(sizes...)
 	g.fields[1].initialize(sizes...)
 	g.shooter = g.random
@@ -29,6 +30,7 @@ func (g *game) initialize(sizes ...int) {
 		g.ship[size]++
 		g.deck++
 	}
+	g.aim = aim
 }
 
 func (g *game) Field() (points []point) {
@@ -57,7 +59,8 @@ func (g *game) Click(x int, y int) []point {
 	return points
 }
 
-func (g *game) answer() (points []point) {
+func (g *game) answer() []point {
+	var points []point
 	for {
 		x, y, ok := g.shot()
 		if !ok {
@@ -70,7 +73,7 @@ func (g *game) answer() (points []point) {
 		}
 		g.add(shots...)
 	}
-	return
+	return points
 }
 
 func (g *game) random() (x int, y int, ok bool) {
@@ -78,7 +81,12 @@ func (g *game) random() (x int, y int, ok bool) {
 		g.ship[g.kill]--
 		g.kill = 0
 	}
-	x, y, ok = g.fields[0].weight(0, g.ship).XYZ()
+	switch g.aim {
+	case 1:
+		x, y, ok = g.fields[0].weight(0, g.ship).XYZ()
+	default:
+		x, y, ok = g.fields[0].random(0).XYZ()
+	}
 	if ok {
 		g.shooter = g.right
 	}
@@ -132,4 +140,12 @@ func (g *game) xy() (int, int) {
 		return -1, -1
 	}
 	return g.hits[len(g.hits)-1].XY()
+}
+
+func (g *game) end() bool {
+	return g.deck == 0
+}
+
+func (g *game) alive() bool {
+	return g.deck > 0
 }
