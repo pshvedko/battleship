@@ -17,7 +17,7 @@ type game struct {
 	kill   int
 	ship   map[int]int
 	deck   int
-	aim    int
+	hard   int
 	shooter
 }
 
@@ -30,7 +30,7 @@ func (g *game) initialize(aim int, sizes ...int) {
 		g.ship[size]++
 		g.deck++
 	}
-	g.aim = aim
+	g.hard = aim
 }
 
 func (g *game) Field() (points []point) {
@@ -81,7 +81,7 @@ func (g *game) random() (x int, y int, ok bool) {
 		g.ship[g.kill]--
 		g.kill = 0
 	}
-	switch g.aim {
+	switch g.hard {
 	case 1:
 		x, y, ok = g.fields[0].weight(0, g.ship).XYZ()
 	default:
