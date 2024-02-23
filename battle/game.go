@@ -14,6 +14,9 @@ type game struct {
 	mutex  sync.Mutex
 	fields [2]field
 	hits   []point
+	kill   int
+	ship   map[int]int
+	deck   int
 	shooter
 }
 
@@ -21,6 +24,11 @@ func (g *game) initialize(sizes ...int) {
 	g.fields[0].initialize(sizes...)
 	g.fields[1].initialize(sizes...)
 	g.shooter = g.random
+	g.ship = make(map[int]int)
+	for _, size := range sizes {
+		g.ship[size]++
+		g.deck++
+	}
 }
 
 func (g *game) Field() (points []point) {
@@ -66,7 +74,11 @@ func (g *game) answer() (points []point) {
 }
 
 func (g *game) random() (x int, y int, ok bool) {
-	x, y, ok = g.fields[0].random(0).XYZ()
+	if g.kill > 0 {
+		g.ship[g.kill]--
+		g.kill = 0
+	}
+	x, y, ok = g.fields[0].weight(0, g.ship).XYZ()
 	if ok {
 		g.shooter = g.right
 	}
@@ -111,6 +123,8 @@ func (g *game) next(x, y int, s shooter) (int, int, bool) {
 
 func (g *game) add(shots ...point) {
 	g.hits = append(g.hits, shots[len(shots)-1])
+	g.kill++
+	g.deck--
 }
 
 func (g *game) xy() (int, int) {

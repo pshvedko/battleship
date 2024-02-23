@@ -24,22 +24,22 @@ func (f *field) add(size int) {
 	var h = [4]int{0, 0, 1, -1}
 	var w = [4]int{1, -1, 0, 0}
 	for {
-		x := rand.Int() % 10
-		y := rand.Int() % 10
-		z := rand.Int() % 4
+		x := rand.Intn(10)
+		y := rand.Intn(10)
+		z := rand.Intn(4)
 		if f.try(x, y, h[z], w[z], size) {
 			return
 		}
 	}
 }
 
-func (f *field) try(x int, y int, h int, w int, size int) bool {
-	if size == 0 {
+func (f *field) try(x int, y int, h int, w int, c int) bool {
+	if c == 0 {
 		return true
 	} else if f.border(x, y) {
 		return false
 	} else if f.empty(x, y) {
-		if f.try(x+h, y+w, h, w, size-1) {
+		if f.try(x+h, y+w, h, w, c-1) {
 			f.set(x, y, fieldShip)
 			return true
 		}
@@ -177,6 +177,60 @@ func (f *field) target(x int, y int) bool {
 	return !f.border(x, y) && f.raw(x, y) < fieldMiss
 }
 
+func (f *field) apply(x int, y int, h int, w int, c int) bool {
+	if c == 0 {
+		return true
+	} else if f.get(x, y) > 0 && f.apply(x+h, y+w, h, w, c-1) {
+		f[y][x] += 1
+		return true
+	}
+	return false
+}
+
+func (f *field) dispose(c int) {
+	for i := range f {
+		for j := range &f[i] {
+			f.apply(j, i, 0, 1, c)
+			f.apply(j, i, 1, 0, c)
+		}
+	}
+}
+
+func (f *field) weight(n int, m map[int]int) point {
+	var t field
+	for i := range f {
+		for j := range &f[i] {
+			if f.raw(j, i) < fieldMiss {
+				t.set(j, i, 1)
+			}
+		}
+	}
+	for w, c := range m {
+		if c > 0 && w > 1 {
+			t.dispose(w)
+		}
+	}
+	var u int
+	var a []point
+	for i := range t {
+		for j := range &t[i] {
+			v := t.raw(j, i) - 1
+			switch {
+			case v > u:
+				u = v
+				a = a[:0]
+				fallthrough
+			case v == u:
+				a = append(a, f.point(n, j, i))
+			}
+		}
+	}
+	if len(a) > 0 {
+		return a[rand.Intn(len(a))]
+	}
+	return -1
+}
+
 func (f *field) random(n int) point {
 	var a []point
 	for i := range f {
@@ -187,7 +241,7 @@ func (f *field) random(n int) point {
 		}
 	}
 	if len(a) > 0 {
-		return a[rand.Int()%len(a)]
+		return a[rand.Intn(len(a))]
 	}
 	return -1
 }

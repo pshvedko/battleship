@@ -3,6 +3,8 @@ package api
 import (
 	"context"
 	"encoding/gob"
+
+	//"encoding/gob"
 	"encoding/json"
 	"log"
 	"math/rand"
@@ -62,9 +64,9 @@ type reply struct {
 func (a *Application) Begin(w websocket.ResponseWriter, r *websocket.Request) {
 	s := r.Context().Value("sid").(uuid.UUID)
 	j := json.NewEncoder(w)
-	for _, z := range a.Service.Begin(s) {
+	for _, p := range a.Service.Begin(s) {
 		w.WriteHeader(http.StatusOK)
-		j.Encode(reply{F: z.F(), point: point{X: z.X(), Y: z.Y()}, C: z.C()})
+		j.Encode(reply{F: p.F(), point: point{X: p.X(), Y: p.Y()}, C: p.C()})
 	}
 }
 
@@ -73,9 +75,9 @@ func (a *Application) Click(w websocket.ResponseWriter, r *websocket.Request) {
 	var q point
 	json.NewDecoder(r.Body).Decode(&q)
 	j := json.NewEncoder(w)
-	for _, z := range a.Service.Click(s, q.X, q.Y) {
+	for _, p := range a.Service.Click(s, q.X, q.Y) {
 		w.WriteHeader(http.StatusOK)
-		j.Encode(reply{F: z.F(), point: point{X: z.X(), Y: z.Y()}, C: z.C()})
+		j.Encode(reply{F: p.F(), point: point{X: p.X(), Y: p.Y()}, C: p.C()})
 	}
 }
 
