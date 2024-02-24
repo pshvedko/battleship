@@ -29,12 +29,11 @@ func main() {
 	w.HandleFunc("/click", a.Click)
 	w.HandleFunc("/reset", a.Reset)
 	r := mux.NewRouter()
-	d, err := fs.Sub(h, "html")
+	f, err := fs.Sub(h, "html")
 	if err != nil {
 		log.Fatal(err)
 	}
-	f := http.FileServer(http.FS(d))
-	r.PathPrefix("/").Handler(f).Methods(http.MethodGet, http.MethodHead)
+	r.PathPrefix("/").Handler(http.FileServer(http.FS(f))).Methods(http.MethodGet, http.MethodHead)
 	r.Use(a.LoggingMiddleware)
 	r.Use(a.SessionMiddleware)
 	r.Use(w.UpgradeMiddleware)

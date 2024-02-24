@@ -30,12 +30,20 @@
         label.innerText = 'You ' + (e ? 'Win' : 'Lose') + '!'
     }
 
+    function onBeginReply(e) {
+        if (e.C === 1) {
+            end[0]++
+            end[1]++
+        }
+        onReply(e)
+    }
+
     function start() {
         modal.style.display = 'none'
         modal.className = 'modal'
         label.innerText = ''
         init()
-        query(onReply, seq++, 'GET', '/begin')
+        query(onBeginReply, seq++, 'GET', '/begin')
     }
 
     function onReset() {
@@ -65,6 +73,7 @@
 
     function init() {
         for (let f = 0; f < 2; f++) {
+            end[f] = 0
             field[f] = []
             for (let y = 0; y < 10; y++) {
                 field[f][y] = []
@@ -72,7 +81,6 @@
                     field[f][y][x] = point(f, x, y)
                 }
             }
-            end[f] = 20
         }
     }
 
@@ -132,6 +140,11 @@
     let handle
     let socket
 
+    function reload() {
+        handle.clear()
+        document.location.reload()
+    }
+
     window.onload = function () {
         handle = new Map
         socket = new WebSocket(location.origin.replace(/^http/, 'ws'))
@@ -142,10 +155,10 @@
             reply(e.data.toString().split(/\r?\n/))
         }
         socket.onclose = function () {
-            handle.clear()
+            reload()
         }
         socket.onerror = function () {
-            handle.clear()
+            reload()
         }
     }
 
